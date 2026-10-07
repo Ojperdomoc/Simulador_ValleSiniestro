@@ -131,6 +131,22 @@
     border:1px solid var(--accent2-soft);background:var(--accent2-soft);
     padding:2px 8px;border-radius:20px;margin-bottom:10px;
   }
+  .puente{
+    margin-top:16px;
+    display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;
+    background:linear-gradient(110deg,#12211f,#161b25);
+    border:1px solid #28c9b74d;border-radius:16px;padding:20px 22px;
+  }
+  @media (max-width:600px){ .puente{grid-template-columns:1fr;} }
+  .puente .pt{font-family:var(--serif);font-size:18px;font-weight:600;margin-bottom:5px;}
+  .puente .ps{font-size:13px;color:var(--muted);line-height:1.55;}
+  .puente .plink{
+    font-family:var(--sans);font-weight:600;font-size:14px;white-space:nowrap;
+    padding:12px 20px;border-radius:11px;border:1px solid transparent;
+    background:linear-gradient(90deg,#1fa895,#28c9b7);color:#062a26;text-decoration:none;
+    transition:transform .1s;
+  }
+  .puente .plink:active{transform:scale(.98);}
 
   /* ---- progress ---- */
   .progress-row{display:flex;align-items:center;gap:12px;margin-bottom:26px;}
@@ -273,6 +289,14 @@
         <div class="mt">Modo grupal · hasta 5</div>
         <div class="ms">Pasa el mismo dispositivo entre 2 y 5 personas. Al final se comparan los perfiles y se resalta dónde el grupo más difiere.</div>
       </button>
+    </div>
+
+    <div class="puente">
+      <div>
+        <div class="pt">¿Y dónde está tu valle con los robots de verdad?</div>
+        <div class="ps">La teoría de Mori explicada con 16 robots de cine, anime y compañías reales: ASIMO, Pepper, Spot, Sophia, Ameca, el Geminoid de Ishiguro y más. Vota imagen por imagen moviendo un marcador a lo largo de la curva y recibe tu perfil al final.</div>
+      </div>
+      <a class="plink" href="valle-de-los-robots.html">Ir al Valle de los Robots →</a>
     </div>
   </div>
 
