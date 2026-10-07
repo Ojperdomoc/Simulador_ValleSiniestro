@@ -112,9 +112,10 @@
   @media (max-width:900px){ .voto-grid{grid-template-columns:1fr;gap:20px;} }
 
   figure.retrato{margin:0;}
-  .marco{position:relative;border-radius:15px;overflow:hidden;border:1px solid var(--line);background:#0e1218;}
+  .marco{position:relative;border-radius:15px;overflow:hidden;border:1px solid var(--line);background:#0e1218;display:grid;grid-template-columns:1fr 1fr;gap:2px;}
   .marco::after{content:'';position:absolute;inset:0;box-shadow:inset 0 0 60px #0008;pointer-events:none;}
-  .marco img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;background:#0e1218;}
+  .marco img{display:block;width:100%;aspect-ratio:3/2;object-fit:cover;background:#0e1218;}
+  @media (max-width:560px){.marco{grid-template-columns:1fr;}}
   .marco .skeleton{position:absolute;inset:0;background:linear-gradient(100deg,#161b25,#1f2635,#161b25);background-size:220% 100%;animation:shine 1.4s linear infinite;}
   @keyframes shine{0%{background-position:120% 0}100%{background-position:-20% 0}}
   .sinspoil{position:absolute;top:10px;left:10px;background:#0c0f14cc;backdrop-filter:blur(6px);border:1px solid var(--line);border-radius:20px;font-family:var(--mono);font-size:10.5px;color:var(--muted);padding:4px 10px;}
@@ -237,7 +238,7 @@
         <p class="lead">Vas a ver 16 robots —de películas, animes y de las grandes compañías de robótica— sin saber quiénes son. En cada uno moverás un marcador <b>a lo largo de la curva</b> hasta el punto que describa lo que sientes. Al final recibirás tu perfil, tu curva personal y un análisis de por qué caíste donde caíste.</p>
 
         <ol class="pasos">
-          <li><span class="num">01</span><div><b>Mira la imagen</b> sin nombre ni pistas. Solo el robot.</div></li>
+          <li><span class="num">01</span><div><b>Mira las dos vistas</b> sin nombre ni pistas. Solo el robot.</div></li>
           <li><span class="num">02</span><div><b>Arrastra el marcador por la curva</b>: a la izquierda están las máquinas evidentes, a la derecha los casi humanos. La altura la decide la curva, no tú. También puedes usar las flechas del teclado.</div></li>
           <li><span class="num">03</span><div><b>Descubre quién era</b> y sigue con el siguiente. Al terminar, tu valle se dibuja completo.</div></li>
         </ol>
@@ -282,11 +283,12 @@
       <div>
         <figure class="retrato">
           <div class="marco">
-            <img id="imagenRobot" alt="Robot sin identificar" width="1000" height="750">
+            <img id="imagenRobot" alt="Robot sin identificar" width="600" height="400">
+            <img id="imagenRobot2" alt="Vista de detalle del robot sin identificar" width="600" height="400">
             <div class="skeleton" id="skeleton"></div>
             <div class="sinspoil" id="etiquetaSpoiler">sin spoilers</div>
           </div>
-          <figcaption id="pieImagen">Imagen anónima · juzga solo lo que ves</figcaption>
+          <figcaption id="pieImagen">Dos vistas anónimas, centradas en el robot · juzga solo lo que ves</figcaption>
         </figure>
         <div class="ficha hidden" id="ficha" aria-live="polite"></div>
       </div>
@@ -685,25 +687,36 @@
     const chip = $('chipCat');
     chip.classList.add('hidden');
 
-    /* imagen */
-    const img = $('imagenRobot');
+    /* imágenes: vista principal + detalle, ambas ≤600×400 y centradas */
+    const imgs = [$('imagenRobot'), $('imagenRobot2')];
     const sk = $('skeleton');
     sk.style.display = 'block';
-    img.style.visibility = 'hidden';
-    img.alt = 'Robot sin identificar número ' + (estado.idx + 1);
-    img.onload = () => { sk.style.display = 'none'; img.style.visibility = 'visible'; };
-    img.src = r.img;
-    if (img.complete) img.onload();
+    let cargadas = 0;
+    imgs.forEach((el, i) => {
+      el.style.visibility = 'hidden';
+      el.alt = (i === 0 ? 'Robot sin identificar número ' : 'Vista de detalle del robot sin identificar número ') + (estado.idx + 1);
+      el.onload = () => {
+        cargadas++;
+        if (cargadas >= imgs.length) {
+          sk.style.display = 'none';
+          imgs.forEach(e => { e.style.visibility = 'visible'; });
+        }
+      };
+      el.src = r.imgs[i];
+      if (el.complete) el.onload();
+    });
     const prox = estado.orden[estado.idx + 1];
-    if (prox) { const p = new Image(); p.src = prox.img; }
+    if (prox) prox.imgs.forEach(s => { const p = new Image(); p.src = s; });
 
     /* precarga oculta */
     document.querySelectorAll('.preimg').forEach(n => n.remove());
-    const oculta = document.createElement('img');
-    oculta.className = 'preimg'; oculta.style.display = 'none'; oculta.src = r.img;
-    document.body.appendChild(oculta);
+    r.imgs.forEach(s => {
+      const oculta = document.createElement('img');
+      oculta.className = 'preimg'; oculta.style.display = 'none'; oculta.src = s;
+      document.body.appendChild(oculta);
+    });
 
-    $('pieImagen').textContent = 'Imagen anónima · juzga solo lo que ves';
+    $('pieImagen').textContent = 'Dos vistas anónimas, centradas en el robot · juzga solo lo que ves';
     $('etiquetaSpoiler').textContent = 'sin spoilers';
     $('ficha').classList.add('hidden');
     $('ficha').innerHTML = '';
