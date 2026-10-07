@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>El Valle de lo Siniestro — Robots</title>
+<meta name="description" content="Recorre 16 robots de cine, anime y compañías reales y vota moviendo un marcador a lo largo de la curva del Valle de lo Siniestro (uncanny valley). Al final recibes tu perfil y un análisis con referencias científicas.">
+<meta name="color-scheme" content="dark">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0c0f14;
+    --bg2:#11151d;
+    --panel:#161b25;
+    --panel2:#1d2330;
+    --line:#2a3140;
+    --text:#e9edf3;
+    --muted:#93a0b4;
+    --accent:#7c6cf0;
+    --accent-soft:#7c6cf033;
+    --accent2:#28c9b7;
+    --accent2-soft:#28c9b733;
+    --warn:#e5726a;
+    --warn-soft:#e5726a26;
+    --sans:'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+    --serif:'Fraunces', Georgia, serif;
+    --mono:'IBM Plex Mono', ui-monospace, monospace;
+    color-scheme: dark;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(1100px 620px at 84% -8%, #1a2436 0%, transparent 60%),
+      radial-gradient(900px 520px at -8% 112%, #211a36 0%, transparent 55%),
+      var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  .wrap{max-width:1040px;margin:0 auto;padding:30px 20px 72px;}
+  @media (max-width:640px){ .wrap{padding:18px 13px 56px;} }
+
+  /* ---------- estructura ---------- */
+  .top{display:flex;align-items:baseline;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:26px;}
+  .brand{font-family:var(--serif);font-weight:600;font-size:20px;letter-spacing:.2px;}
+  .brand span{color:var(--accent2);}
+  .volver{font-family:var(--mono);font-size:11.5px;color:var(--muted);text-decoration:none;border:1px solid var(--line);padding:5px 11px;border-radius:20px;transition:border-color .15s,color .15s;}
+  .volver:hover{color:var(--accent2);border-color:var(--accent2);}
+  .card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:18px;padding:30px;}
+  @media (max-width:640px){ .card{padding:20px 16px;border-radius:15px;} }
+  .hidden{display:none !important;}
+  h1{font-family:var(--serif);font-weight:600;font-size:clamp(27px,4.2vw,40px);line-height:1.1;margin:0 0 14px;}
+  h1 em{font-style:italic;color:var(--accent2);}
+  h2{font-family:var(--serif);font-weight:600;font-size:clamp(20px,2.6vw,26px);margin:0 0 8px;line-height:1.2;}
+  h3{font-family:var(--sans);font-weight:600;font-size:14.5px;margin:0 0 8px;}
+  p{line-height:1.65;}
+  .lead{color:var(--muted);font-size:15.5px;line-height:1.65;max-width:62ch;margin:0 0 24px;}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent2);margin-bottom:10px;}
+  .muted{color:var(--muted);}
+  .mono{font-family:var(--mono);}
+  .small{font-size:12.5px;}
+  a{color:var(--accent2);}
+
+  /* ---------- botones ---------- */
+  .btn{
+    font-family:var(--sans);font-weight:600;font-size:14px;
+    padding:12px 20px;border-radius:11px;border:1px solid var(--line);
+    background:var(--panel2);color:var(--text);cursor:pointer;
+    transition:transform .1s,border-color .15s,background .15s,opacity .15s;
+  }
+  .btn:hover:not(:disabled){border-color:var(--accent);}
+  .btn:active:not(:disabled){transform:scale(.98);}
+  .btn.primary{background:linear-gradient(90deg,var(--accent),#6a5ce0);border-color:transparent;color:#fff;}
+  .btn.teal{background:linear-gradient(90deg,#1fa895,#28c9b7);border-color:transparent;color:#062a26;}
+  .btn.ghost{background:transparent;}
+  .btn.small{padding:9px 14px;font-size:13px;border-radius:9px;}
+  .btn:disabled{opacity:.32;cursor:not-allowed;}
+  .btn-row{display:flex;gap:10px;flex-wrap:wrap;}
+
+  /* ---------- portada ---------- */
+  .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:34px;align-items:start;}
+  @media (max-width:820px){ .hero-grid{grid-template-columns:1fr;gap:24px;} }
+  .pasos{list-style:none;margin:0 0 22px;padding:0;display:grid;gap:12px;}
+  .pasos li{display:flex;gap:12px;align-items:flex-start;font-size:14px;line-height:1.55;color:var(--muted);}
+  .pasos b{color:var(--text);font-weight:600;}
+  .num{flex:0 0 auto;width:24px;height:24px;border-radius:50%;background:var(--accent-soft);border:1px solid #7c6cf055;color:var(--accent2);font-family:var(--mono);font-size:11.5px;display:flex;align-items:center;justify-content:center;margin-top:1px;}
+  .opciones{display:grid;gap:10px;margin:20px 0 22px;}
+  .switch{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;color:var(--muted);cursor:pointer;line-height:1.5;}
+  .switch input{margin-top:3px;accent-color:var(--accent);width:16px;height:16px;flex:0 0 auto;cursor:pointer;}
+  .aviso{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:13px 15px;font-size:12.5px;color:var(--muted);line-height:1.6;}
+  details.metodo{background:var(--bg2);border:1px solid var(--line);border-radius:13px;padding:14px 16px;margin-top:20px;}
+  details.metodo summary{cursor:pointer;font-size:13.5px;font-weight:600;color:var(--accent2);}
+  details.metodo p{font-size:13.5px;color:var(--muted);margin:12px 0 0;}
+  details.metodo ul{font-size:13px;color:var(--muted);line-height:1.7;padding-left:20px;margin:12px 0 0;}
+
+  /* ---------- votación ---------- */
+  .barra-sup{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap;}
+  .progreso-track{flex:1;min-width:120px;height:6px;background:var(--line);border-radius:6px;overflow:hidden;}
+  .progreso-fill{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:6px;transition:width .35s ease;}
+  .contador{font-family:var(--mono);font-size:11.5px;color:var(--muted);white-space:nowrap;}
+  .chip{font-family:var(--mono);font-size:11px;padding:3px 10px;border-radius:20px;border:1px solid var(--line);color:var(--muted);white-space:nowrap;}
+  .chip.cat{border-color:transparent;font-weight:500;}
+
+  .voto-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:26px;align-items:start;}
+  @media (max-width:900px){ .voto-grid{grid-template-columns:1fr;gap:20px;} }
+
+  figure.retrato{margin:0;}
+  .marco{position:relative;border-radius:15px;overflow:hidden;border:1px solid var(--line);background:#0e1218;}
+  .marco::after{content:'';position:absolute;inset:0;box-shadow:inset 0 0 60px #0008;pointer-events:none;}
+  .marco img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;background:#0e1218;}
+  .marco .skeleton{position:absolute;inset:0;background:linear-gradient(100deg,#161b25,#1f2635,#161b25);background-size:220% 100%;animation:shine 1.4s linear infinite;}
+  @keyframes shine{0%{background-position:120% 0}100%{background-position:-20% 0}}
+  .sinspoil{position:absolute;top:10px;left:10px;background:#0c0f14cc;backdrop-filter:blur(6px);border:1px solid var(--line);border-radius:20px;font-family:var(--mono);font-size:10.5px;color:var(--muted);padding:4px 10px;}
+  figcaption{font-size:12px;color:var(--muted);margin-top:9px;line-height:1.55;font-family:var(--mono);}
+
+  .ficha{border:1px solid var(--accent2-soft);background:linear-gradient(180deg,#12211f,#131a24);border-radius:14px;padding:16px 17px;margin-top:14px;}
+  .ficha .ft{font-family:var(--serif);font-size:19px;font-weight:600;margin:6px 0 2px;}
+  .ficha .fs{font-size:12.5px;color:var(--muted);font-family:var(--mono);margin-bottom:10px;}
+  .ficha .fd{font-size:13.5px;line-height:1.6;color:var(--text);}
+  .ficha .fpos{margin-top:12px;padding-top:12px;border-top:1px dashed var(--line);font-size:12.5px;color:var(--muted);line-height:1.6;}
+
+  .curva-panel{background:var(--bg2);border:1px solid var(--line);border-radius:15px;padding:16px;}
+  .curva-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:8px;}
+  .curva-head .t{font-size:14px;font-weight:600;}
+  .svg-curva{width:100%;height:auto;display:block;touch-action:none;border-radius:10px;cursor:grab;}
+  .svg-curva:focus-visible{outline:2px solid var(--accent2);outline-offset:3px;}
+  .svg-curva.arrastrando{cursor:grabbing;}
+  .svg-curva .pista{cursor:pointer;}
+  @media (max-width:900px){ .svg-curva .oculto-movil{display:none;} }
+
+  .lecturas{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0 4px;}
+  @media (max-width:480px){ .lecturas{grid-template-columns:1fr;} }
+  .lectura{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:11px 13px;}
+  .lectura .k{font-family:var(--mono);font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px;}
+  .lectura .v{font-family:var(--mono);font-size:19px;font-weight:600;line-height:1.1;}
+  .lectura .v.pos{color:var(--accent2);}
+  .lectura .v.neg{color:var(--warn);}
+  .lectura .v.neu{color:var(--text);}
+
+  .afinar{display:grid;gap:6px;margin:12px 0 2px;}
+  .afinar label{font-family:var(--mono);font-size:10.5px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;}
+  input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:6px;background:linear-gradient(90deg,#28c9b755,#7c6cf055,#e5726a66,#28c9b755);cursor:pointer;}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--text);border:3px solid var(--accent);cursor:pointer;}
+  input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--text);border:3px solid var(--accent);cursor:pointer;}
+
+  .pregunta{margin-top:16px;padding-top:14px;border-top:1px solid var(--line);}
+  .pregunta .qp{font-size:13px;color:var(--muted);margin-bottom:9px;}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;}
+  .chipbtn{font-family:var(--sans);font-size:12.5px;padding:8px 12px;border-radius:20px;border:1px solid var(--line);background:var(--bg2);color:var(--text);cursor:pointer;transition:all .13s;}
+  .chipbtn:hover{border-color:var(--accent2);}
+  .chipbtn.sel{border-color:var(--accent2);background:var(--accent2-soft);color:var(--accent2);font-weight:600;}
+  .nav{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:22px;flex-wrap:wrap;}
+
+  /* ---------- resultados ---------- */
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:22px 0 6px;}
+  @media (max-width:760px){ .kpis{grid-template-columns:repeat(2,1fr);} }
+  .kpi{background:var(--bg2);border:1px solid var(--line);border-radius:13px;padding:14px 15px;}
+  .kpi .k{font-family:var(--mono);font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px;}
+  .kpi .v{font-family:var(--serif);font-size:26px;font-weight:600;line-height:1.05;}
+  .kpi .s{font-size:11.5px;color:var(--muted);margin-top:5px;line-height:1.45;}
+  .perfil{display:flex;gap:14px;align-items:flex-start;background:linear-gradient(120deg,#182036,#1a2330);border:1px solid var(--accent-soft);border-radius:15px;padding:18px 20px;margin:20px 0;}
+  .perfil .ptic{font-family:var(--serif);font-size:22px;font-weight:600;margin-bottom:5px;}
+  .perfil .plema{font-size:13.5px;color:var(--muted);}
+
+  .leyenda{display:flex;gap:16px;flex-wrap:wrap;margin:14px 0 8px;align-items:center;}
+  .leyenda .li{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted);font-family:var(--mono);}
+  .punto-l{width:11px;height:11px;border-radius:50%;background:var(--accent2);}
+  .punto-l.hueco{background:transparent;border:2px solid var(--muted);}
+  .linea-l{width:18px;height:3px;border-radius:3px;background:linear-gradient(90deg,var(--accent2),var(--accent),var(--warn));}
+  .toggle-ref{font-family:var(--mono);font-size:11.5px;color:var(--muted);background:transparent;border:1px solid var(--line);border-radius:20px;padding:5px 11px;cursor:pointer;margin-left:auto;}
+  .toggle-ref:hover{border-color:var(--accent2);color:var(--accent2);}
+
+  .dos-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:24px 0;}
+  @media (max-width:760px){ .dos-col{grid-template-columns:1fr;} }
+  .panel-mini{background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:16px;}
+  .panel-mini h3{color:var(--muted);font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px;}
+  .rank{display:grid;gap:10px;}
+  .rank-it{display:flex;gap:11px;align-items:center;}
+  .rank-it img{width:52px;height:38px;object-fit:cover;border-radius:8px;border:1px solid var(--line);flex:0 0 auto;}
+  .rank-it .rn{font-size:13.5px;font-weight:600;line-height:1.25;}
+  .rank-it .ro{font-size:11.5px;color:var(--muted);font-family:var(--mono);}
+  .rank-it .rv{margin-left:auto;font-family:var(--mono);font-size:15px;font-weight:600;white-space:nowrap;}
+
+  .cats{display:grid;gap:12px;margin:24px 0;}
+  .cat-row{display:grid;grid-template-columns:150px 1fr 54px;gap:12px;align-items:center;font-size:13px;}
+  @media (max-width:560px){ .cat-row{grid-template-columns:110px 1fr 44px;font-size:12px;} }
+  .cat-bar{height:12px;border-radius:8px;background:var(--line);overflow:hidden;}
+  .cat-fill{height:100%;border-radius:8px;transition:width .5s ease;}
+
+  .feedback{display:grid;gap:16px;margin:26px 0;}
+  .fsec{background:var(--bg2);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:0 13px 13px 0;padding:17px 19px;}
+  .fsec h3{font-family:var(--serif);font-size:17px;font-weight:600;margin:0 0 9px;}
+  .fsec p{margin:0;font-size:14px;line-height:1.7;color:#d3dae5;}
+  .fsec b{color:var(--accent2);}
+  .fsec i{color:var(--text);}
+
+  table.tabla{width:100%;border-collapse:collapse;font-size:12.5px;}
+  table.tabla th{text-align:left;font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:8px 8px;border-bottom:1px solid var(--line);}
+  table.tabla td{padding:9px 8px;border-bottom:1px solid #20273438;vertical-align:middle;}
+  table.tabla td.num{font-family:var(--mono);text-align:right;}
+  table.tabla tr:last-child td{border-bottom:none;}
+  .dot-cat{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:middle;}
+  .tabla-scroll{overflow-x:auto;background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:6px 14px 10px;margin-top:10px;}
+
+  .refs{font-size:12.5px;color:var(--muted);line-height:1.75;margin:8px 0 0;padding-left:18px;}
+  .refs a{text-decoration:none;border-bottom:1px dotted #28c9b766;}
+  .footer-note{text-align:center;color:var(--muted);font-size:11.5px;margin-top:28px;font-family:var(--mono);}
+  .sep{height:1px;background:var(--line);margin:30px 0;}
+  .aviso-previo{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--accent2-soft);border:1px solid #28c9b74d;border-radius:12px;padding:12px 15px;margin:0 0 18px;font-size:13px;color:#bfe9e2;}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:.001ms !important;transition-duration:.001ms !important;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="brand">El Valle de lo <span>Siniestro</span> · Robots</div>
+    <a class="volver" href="index.html">← Simulador de interacción en salud</a>
+  </header>
+
+  <!-- ================= PORTADA ================= -->
+  <section id="pantalla-inicio" class="card">
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow">Uncanny valley · 1970 → hoy</div>
+        <h1>¿Dónde está <em>tu</em> valle de lo siniestro?</h1>
+        <p class="lead">Vas a ver 16 robots —de películas, animes y de las grandes compañías de robótica— sin saber quiénes son. En cada uno moverás un marcador <b>a lo largo de la curva</b> hasta el punto que describa lo que sientes. Al final recibirás tu perfil, tu curva personal y un análisis de por qué caíste donde caíste.</p>
+
+        <ol class="pasos">
+          <li><span class="num">01</span><div><b>Mira la imagen</b> sin nombre ni pistas. Solo el robot.</div></li>
+          <li><span class="num">02</span><div><b>Arrastra el marcador por la curva</b>: a la izquierda están las máquinas evidentes, a la derecha los casi humanos. La altura la decide la curva, no tú. También puedes usar las flechas del teclado.</div></li>
+          <li><span class="num">03</span><div><b>Descubre quién era</b> y sigue con el siguiente. Al terminar, tu valle se dibuja completo.</div></li>
+        </ol>
+
+        <div class="opciones">
+          <label class="switch"><input type="checkbox" id="optAleatorio" checked><span>Orden aleatorio. Cada recorrido baraja los robots para que no adivines el orden.</span></label>
+          <label class="switch"><input type="checkbox" id="optConfianza" checked><span>Incluir la pregunta de confianza («¿confiarías en este robot?»). Alimenta una parte del análisis final.</span></label>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn primary" id="btnComenzar">Comenzar el recorrido</button>
+          <button class="btn ghost" id="btnRetomar" hidden>Ver mi último resultado</button>
+        </div>
+      </div>
+
+      <div>
+        <div class="curva-panel">
+          <div class="curva-head"><span class="t">La curva, en resumen</span><span class="chip">referencia del estudio</span></div>
+          <div id="curva-demo"></div>
+          <p class="small muted" style="margin:10px 2px 0;line-height:1.6;">Los robots obvios nos caen bien. Los que se acercan demasiado a lo humano —pero no lo alcanzan— producen rechazo: eso es el <b>valle</b>. Del otro lado, casi nadie llega.</p>
+        </div>
+        <details class="metodo">
+          <summary>¿De dónde sale esta curva?</summary>
+          <p>En 1970 el roboticista japonés Masahiro Mori describió que nuestra afinidad por un robot crece con su parecido humano… hasta desplomarse de golpe cuando ese parecido es alto pero imperfecto. Sus estudios se refieren a la sensación con la palabra japonesa <i>shinwakan</i> (familiaridad, afinidad).</p>
+          <p>Como la <b>familiaridad</b> no puede ser negativa en sentido estricto, aquí el eje vertical se llama <b>aceptación</b>: +1 es «me encanta», −1 es «profundamente incómodo». Y como pedía Mori, el movimiento amplifica el efecto: por eso en esta página cada robot es una imagen y tu juicio es un gesto.</p>
+          <p class="small">Referencias al final de los resultados: Mori (1970); MacDorman &amp; Ishiguro (2006); Mathur &amp; Reichling (2016); Kim, de Visser &amp; Phillips (2022).</p>
+        </details>
+        <div class="aviso" style="margin-top:14px;">Tus votos viven solo en este navegador. No se envía nada a ningún servidor: ni tus respuestas ni tu nombre. Puedes borrar todo cuando quieras desde los resultados.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= VOTACIÓN ================= -->
+  <section id="pantalla-voto" class="card hidden">
+    <div class="barra-sup">
+      <span class="contador" id="contador">Robot 1 de 16</span>
+      <div class="progreso-track"><div class="progreso-fill" id="progresoFill"></div></div>
+      <span class="chip cat hidden" id="chipCat"></span>
+    </div>
+
+    <div class="voto-grid">
+      <div>
+        <figure class="retrato">
+          <div class="marco">
+            <img id="imagenRobot" alt="Robot sin identificar" width="1000" height="750">
+            <div class="skeleton" id="skeleton"></div>
+            <div class="sinspoil" id="etiquetaSpoiler">sin spoilers</div>
+          </div>
+          <figcaption id="pieImagen">Imagen anónima · juzga solo lo que ves</figcaption>
+        </figure>
+        <div class="ficha hidden" id="ficha" aria-live="polite"></div>
+      </div>
+
+      <div>
+        <div class="curva-panel">
+          <div class="curva-head">
+            <span class="t">¿Qué tan humano te parece y cómo te hace sentir?</span>
+            <span class="chip">arrastra o usa ← →</span>
+          </div>
+          <div id="curva-voto"></div>
+
+          <div class="lecturas">
+            <div class="lectura"><div class="k">Parecido humano</div><div class="v" id="lecturaX">—</div></div>
+            <div class="lectura"><div class="k">Qué te provoca</div><div class="v" id="lecturaY">Mueve el marcador</div></div>
+          </div>
+
+          <div class="afinar">
+            <label for="sliderX">Ajuste fino con la barra</label>
+            <input type="range" id="sliderX" min="0" max="100" step="1" value="50"
+                   aria-label="Parecido humano percibido, de 0 a 100 por ciento">
+          </div>
+
+          <div class="pregunta" id="bloqueConfianza">
+            <div class="qp">¿Confiarías en este robot? (opcional)</div>
+            <div class="chips" id="chipsConfianza">
+              <button class="chipbtn" data-conf="2">Sí, confiaría</button>
+              <button class="chipbtn" data-conf="1">Solo con supervisión</button>
+              <button class="chipbtn" data-conf="0">No, ni loco</button>
+            </div>
+          </div>
+
+          <div class="pregunta">
+            <div class="qp">¿Ya conocías este robot? (opcional)</div>
+            <div class="chips" id="chipsConocido">
+              <button class="chipbtn" data-con="1">Sí, lo tenía visto</button>
+              <button class="chipbtn" data-con="0">No, es nuevo para mí</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="nav">
+          <button class="btn ghost" id="btnAnterior">← Anterior</button>
+          <div class="btn-row">
+            <button class="btn ghost hidden" id="btnCambiar">Cambiar mi voto</button>
+            <button class="btn primary" id="btnSiguiente" disabled>Registrar voto y ver quién era</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= RESULTADOS ================= -->
+  <section id="pantalla-resultados" class="hidden">
+    <div class="card">
+      <div id="avisoPrevio"></div>
+      <div class="eyebrow">Tu recorrido completo</div>
+      <h1 id="tituloResultados">Tu valle de lo siniestro</h1>
+      <div class="perfil" id="perfilCaja"></div>
+
+      <div class="kpis" id="kpis"></div>
+
+      <div class="curva-panel" style="margin-top:24px;">
+        <div class="curva-head">
+          <span class="t">Los 16 robots en tu curva</span>
+          <button class="toggle-ref" id="btnRef" aria-pressed="true">ocultar referencia del estudio</button>
+        </div>
+        <div id="curva-resultado"></div>
+        <div class="leyenda">
+          <span class="li"><span class="punto-l"></span> tu voto</span>
+          <span class="li"><span class="punto-l hueco"></span> referencia del estudio</span>
+          <span class="li"><span class="linea-l"></span> curva de Mori</span>
+        </div>
+      </div>
+
+      <div class="dos-col">
+        <div class="panel-mini">
+          <h3>Tu fondo del valle</h3>
+          <div class="rank" id="rankSiniestros"></div>
+        </div>
+        <div class="panel-mini">
+          <h3>Los que te cayeron mejor</h3>
+          <div class="rank" id="rankFiables"></div>
+        </div>
+      </div>
+
+      <h2 style="margin-top:26px;">Comparación por categoría</h2>
+      <p class="small muted" style="margin-bottom:6px;">Aceptación media (0–100) de cada familia de robots, según tus votos.</p>
+      <div class="cats" id="cats"></div>
+
+      <div class="sep"></div>
+
+      <div class="eyebrow">Feedback</div>
+      <h2>Lo que dicen tus votos</h2>
+      <div class="feedback" id="feedback"></div>
+
+      <div class="sep"></div>
+
+      <h2>Detalle de tus 16 votos</h2>
+      <p class="small muted" style="margin-bottom:4px;">Ordenados de más mecánico a más humano, según tu percepción.</p>
+      <div class="tabla-scroll">
+        <table class="tabla" id="tabla"></table>
+      </div>
+
+      <div class="btn-row" style="margin-top:26px;">
+        <button class="btn primary" id="btnRepetir">Repetir el recorrido</button>
+        <button class="btn" id="btnCSV">Descargar CSV</button>
+        <button class="btn" id="btnCopiar">Copiar resumen</button>
+        <button class="btn ghost" id="btnBorrar">Borrar mis datos</button>
+      </div>
+      <p class="small muted" id="estadoGuardado" style="margin-top:12px;"></p>
+
+      <div class="sep"></div>
+
+      <details class="metodo">
+        <summary>Cómo se calcula todo esto</summary>
+        <p><b>La curva.</b> Es la curva de Mori reconstruida en 13 puntos de control e interpolada con splines de Catmull-Rom: sube con los robots evidentemente mecánicos, cae hasta un mínimo en el 72 % de parecido humano y se recupera cerca del 100 %.</p>
+        <p><b>Tu voto.</b> Al arrastrar, el marcador se proyecta sobre el punto más cercano de la curva y se registra su posición horizontal (tu parecido humano percibido). La altura —lo que sientes— se lee de la curva misma. De ahí salen tu aceptación media, la profundidad de tu valle, la posición de tu mínimo y tu coincidencia con la curva de referencia (error absoluto medio).</p>
+        <p><b>La referencia de cada robot.</b> La columna «referencia del estudio» es una estimación orientativa de dónde cae cada robot en el eje de parecido humano, según cómo se ha usado en la literatura de percepción de apariencias. No es una medida física: es un punto de comparación, no una verdad.</p>
+        <p><b>Lo que no hace.</b> No hay respuestas correctas. Dos personas pueden votar el mismo robot en extremos opuestos y ambas estar describiendo algo real: la curva está en quien mira.</p>
+      </details>
+
+      <h3 style="margin-top:26px;color:var(--muted);font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;">Referencias</h3>
+      <ul class="refs" id="refs"></ul>
+
+      <h3 style="margin-top:22px;color:var(--muted);font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;">Imágenes</h3>
+      <ul class="refs" id="creditos"></ul>
+
+      <p class="footer-note">Hecho con cariño para aprender mirando · sin servidores, sin cookies, sin datos que salgan de tu navegador</p>
+    </div>
+  </section>
+
+</div>
+
+<script src="assets/valle-core.js"></script>
+<script>
+(function () {
+  'use strict';
+  const V = window.ValleCore;
+  const $ = id => document.getElementById(id);
+  const CLAVE = 'valleRobots.v1';
+
+  /* ---------------- estado ---------------- */
+  const estado = {
+    orden: [], idx: 0, fase: 'voto',
+    votos: [],           // {id, x, confianza, conocido}
+    movido: false,
+    confianzaTemp: null, conocidoTemp: null,
+    usarConfianza: true,
+    previa: null, sesionPreviaIdx: null
+  };
+
+  /* ---------------- persistencia ---------------- */
+  function leerDatos() {
+    try {
+      const raw = localStorage.getItem(CLAVE);
+      if (!raw) return { sesiones: [] };
+      const d = JSON.parse(raw);
+      return (d && Array.isArray(d.sesiones)) ? d : { sesiones: [] };
+    } catch (e) { return { sesiones: [] }; }
+  }
+  function escribirDatos(d) {
+    try { localStorage.setItem(CLAVE, JSON.stringify(d)); return true; }
+    catch (e) { return false; }
+  }
+  function guardarSesion(analisis) {
+    const d = leerDatos();
+    d.sesiones.push({
+      hora: analisis.hora,
+      votos: estado.votos.map(v => ({ id: v.id, x: v.x, confianza: v.confianza, conocido: v.conocido })),
+      aceptacion: analisis.aceptacion,
+      perfil: analisis.arquetipo.titulo
+    });
+    if (d.sesiones.length > 20) d.sesiones = d.sesiones.slice(-20);
+    return escribirDatos(d);
+  }
+
+  /* =====================================================================
+     DIBUJO DE LA CURVA (SVG)
+     ===================================================================== */
+  const VB = { w: 940, h: 470, l: 64, r: 28, t: 30, b: 62 };
+  const X = x => VB.l + x * (VB.w - VB.l - VB.r);
+  const Y = y => VB.t + (1 - (y + 1) / 2) * (VB.h - VB.t - VB.b);
+  const NS = 'http://www.w3.org/2000/svg';
+  const el = (n, a, txt) => {
+    const e = document.createElementNS(NS, n);
+    for (const k in (a || {})) e.setAttribute(k, a[k]);
+    if (txt != null) e.textContent = txt;
+    return e;
+  };
+
+  function pintarEjes(svg, opciones) {
+    const op = opciones || {};
+    const g = el('g');
+    /* rejilla horizontal */
+    [-1, -0.5, 0, 0.5, 1].forEach(v => {
+      const yy = Y(v);
+      g.appendChild(el('line', { x1: VB.l, x2: VB.w - VB.r, y1: yy, y2: yy, stroke: v === 0 ? '#3a4354' : '#232b39', 'stroke-width': v === 0 ? 1.4 : 1, 'stroke-dasharray': v === 0 ? 'none' : '4 6' }));
+    });
+    /* etiquetas del eje Y */
+    const etiquetas = [
+      { y: 1, t: 'familiar', f: '#28c9b7' },
+      { y: 0, t: 'neutro', f: '#93a0b4' },
+      { y: -1, t: 'profundamente incómodo', f: '#e5726a' }
+    ];
+    etiquetas.forEach(e => {
+      g.appendChild(el('text', { x: VB.l - 12, y: Y(e.y) + 4, 'text-anchor': 'end', fill: e.f, 'font-size': e.t.length > 12 ? 10 : 11.5, 'font-family': "'IBM Plex Mono', monospace" }, e.t));
+    });
+    /* eje X */
+    [0, 0.25, 0.5, 0.75, 1].forEach(x => {
+      const xx = X(x);
+      g.appendChild(el('line', { x1: xx, x2: xx, y1: VB.h - VB.b, y2: VB.h - VB.b + 6, stroke: '#3a4354', 'stroke-width': 1 }));
+      g.appendChild(el('text', { x: xx, y: VB.h - VB.b + 22, 'text-anchor': 'middle', fill: '#93a0b4', 'font-size': 11, 'font-family': "'IBM Plex Mono', monospace" }, Math.round(x * 100) + '%'));
+    });
+    g.appendChild(el('text', { x: VB.l - 12, y: VB.h - VB.b + 22, 'text-anchor': 'end', fill: '#6f7c90', 'font-size': 10.5, 'font-family': "'IBM Plex Mono', monospace" }, '0%'));
+    g.appendChild(el('text', { x: VB.l, y: VB.h - 16, fill: '#6f7c90', 'font-size': 11, 'font-family': "'IBM Plex Mono', monospace" }, 'máquina'));
+    g.appendChild(el('text', { x: VB.w - VB.r, y: VB.h - 16, 'text-anchor': 'end', fill: '#6f7c90', 'font-size': 11, 'font-family': "'IBM Plex Mono', monospace" }, 'humano'));
+    g.appendChild(el('text', { x: VB.l - 12, y: VB.t - 8, fill: '#6f7c90', 'font-size': 10.5, 'font-family': "'IBM Plex Mono', monospace" }, op.tituloY || 'ACEPTACIÓN'));
+    svg.appendChild(g);
+  }
+
+  function pintarCurva(svg, opciones) {
+    const op = opciones || {};
+    const muestras = V.MUESTRAS;
+    const cId = 'gradCurva' + (op.sufijo || '');
+    const fId = 'gradFill' + (op.sufijo || '');
+    const defs = el('defs');
+    const lg = el('linearGradient', { id: cId, x1: '0', y1: '0', x2: '1', y2: '0' });
+    [['0%', '#28c9b7'], ['34%', '#7c6cf0'], ['64%', '#e5726a'], ['100%', '#28c9b7']].forEach(s => {
+      lg.appendChild(el('stop', { offset: s[0], 'stop-color': s[1] }));
+    });
+    defs.appendChild(lg);
+    const fg = el('linearGradient', { id: fId, x1: '0', y1: '0', x2: '0', y2: '1' });
+    fg.appendChild(el('stop', { offset: '0%', 'stop-color': '#7c6cf0', 'stop-opacity': '.20' }));
+    fg.appendChild(el('stop', { offset: '55%', 'stop-color': '#e5726a', 'stop-opacity': '.16' }));
+    fg.appendChild(el('stop', { offset: '100%', 'stop-color': '#0c0f14', 'stop-opacity': '0' }));
+    defs.appendChild(fg);
+    svg.appendChild(defs);
+
+    /* relleno bajo la curva */
+    let d = 'M ' + X(muestras[0].x) + ' ' + Y(muestras[0].y);
+    muestras.forEach(p => { d += ' L ' + X(p.x).toFixed(2) + ' ' + Y(p.y).toFixed(2); });
+    d += ' L ' + X(1) + ' ' + Y(-1) + ' L ' + X(0) + ' ' + Y(-1) + ' Z';
+    svg.appendChild(el('path', { d: d, fill: 'url(#' + fId + ')', stroke: 'none' }));
+
+    /* trazo */
+    let dc = 'M ' + X(muestras[0].x) + ' ' + Y(muestras[0].y);
+    muestras.forEach(p => { dc += ' L ' + X(p.x).toFixed(2) + ' ' + Y(p.y).toFixed(2); });
+    svg.appendChild(el('path', { d: dc, fill: 'none', stroke: 'url(#' + cId + ')', 'stroke-width': 3.4, 'stroke-linecap': 'round' }));
+
+    if (op.anotaciones !== false) {
+      const mx = V.PUNTO_MAS_SINIESTRO;
+      svg.appendChild(el('text', { x: X(mx.x), y: Y(mx.y) + 26, 'text-anchor': 'middle', fill: '#e5726a', 'font-size': 12, 'font-weight': 600, 'font-family': "'IBM Plex Sans', sans-serif" }, 'el valle'));
+      svg.appendChild(el('text', { x: X(0.24), y: Y(0.94), 'text-anchor': 'middle', fill: '#28c9b7', 'font-size': 11.5, 'font-family': "'IBM Plex Mono', monospace" }, 'robots de juguete'));
+      svg.appendChild(el('text', { x: X(0.995), y: Y(-0.3), 'text-anchor': 'end', fill: '#6f7c90', 'font-size': 10.5, 'font-family': "'IBM Plex Mono', monospace" }, 'casi humano'));
+    }
+  }
+
+  function capaArrastre(svg, onCambio) {
+    const rect = el('rect', {
+      x: VB.l - 26, y: VB.t - 10, width: VB.w - VB.l - VB.r + 52, height: VB.h - VB.t - VB.b + 30,
+      fill: 'transparent', 'class': 'pista'
+    });
+    rect.style.cursor = 'grab';
+    let arrastrando = false;
+
+    const aplicar = ev => {
+      const r = svg.getBoundingClientRect();
+      const px = ((ev.clientX - r.left) / r.width) * VB.w;
+      const py = ((ev.clientY - r.top) / r.height) * VB.h;
+      const nx = (px - VB.l) / (VB.w - VB.l - VB.r);
+      const ny = 1 - 2 * ((py - VB.t) / (VB.h - VB.t - VB.b));
+      const p = V.proyectarEnCurva(nx, ny);
+      onCambio(p.x, true);
+    };
+
+    rect.addEventListener('pointerdown', ev => {
+      arrastrando = true;
+      if (rect.setPointerCapture) { try { rect.setPointerCapture(ev.pointerId); } catch (e) {} }
+      svg.classList.add('arrastrando');
+      aplicar(ev);
+      ev.preventDefault();
+    });
+    rect.addEventListener('pointermove', ev => { if (arrastrando) { aplicar(ev); ev.preventDefault(); } });
+    const soltar = () => { arrastrando = false; svg.classList.remove('arrastrando'); };
+    rect.addEventListener('pointerup', soltar);
+    rect.addEventListener('pointercancel', soltar);
+    svg.appendChild(rect);
+    return { aplicarRect: rect };
+  }
+
+  function crearSvgCurva(sufijo, opciones) {
+    const svg = el('svg', {
+      viewBox: '0 0 ' + VB.w + ' ' + VB.h, 'class': 'svg-curva',
+      preserveAspectRatio: 'xMidYMid meet', role: 'img'
+    });
+    pintarEjes(svg, opciones);
+    pintarCurva(svg, Object.assign({ sufijo: sufijo }, opciones));
+    return svg;
+  }
+
+  /* =====================================================================
+     PORTADA: curva demostrativa
+     ===================================================================== */
+  function montarDemo() {
+    const cont = $('curva-demo');
+    cont.innerHTML = '';
+    const svg = crearSvgCurva('demo');
+    cont.appendChild(svg);
+    /* puntos de ejemplo */
+    [['WALL·E', 0.14], ['Gundam', 0.30], ['T-800', 0.45], ['Sophia', 0.84], ['Geminoid', 0.93]].forEach(p => {
+      const y = V.valleY(p[1]);
+      svg.appendChild(el('circle', { cx: X(p[1]), cy: Y(y), r: 6.5, fill: '#0c0f14', stroke: '#93a0b4', 'stroke-width': 2 }));
+      svg.appendChild(el('text', {
+        x: X(p[1]), y: Y(y) + (y > 0 ? -14 : 20), 'text-anchor': 'middle',
+        fill: '#93a0b4', 'font-size': 10.5, 'font-family': "'IBM Plex Mono', monospace"
+      }, p[0]));
+    });
+  }
+
+  /* =====================================================================
+     FLUJO DE VOTACIÓN
+     ===================================================================== */
+  let svgVoto = null, marcador = null, guia = null;
+
+  function montarCurvaVoto() {
+    const cont = $('curva-voto');
+    cont.innerHTML = '';
+    svgVoto = crearSvgCurva('voto', { anotaciones: true });
+    svgVoto.setAttribute('tabindex', '0');
+    svgVoto.setAttribute('role', 'slider');
+    svgVoto.setAttribute('aria-label', 'Punto de la curva: qué tan parecido a un humano te parece este robot');
+    svgVoto.setAttribute('aria-valuemin', '0');
+    svgVoto.setAttribute('aria-valuemax', '100');
+
+    guia = el('line', { x1: 0, x2: 0, y1: 0, y2: Y(-1), stroke: '#7c6cf0', 'stroke-width': 1.2, 'stroke-dasharray': '3 5', opacity: '.8' });
+    const halo = el('circle', { cx: 0, cy: 0, r: 20, fill: '#28c9b7', opacity: '.12' });
+    const anillo = el('circle', { cx: 0, cy: 0, r: 12.5, fill: '#0c0f14', stroke: '#28c9b7', 'stroke-width': 3.5 });
+    const punto = el('circle', { cx: 0, cy: 0, r: 4.5, fill: '#e9edf3' });
+    marcador = el('g', { 'pointer-events': 'none' });
+    marcador.appendChild(halo); marcador.appendChild(anillo); marcador.appendChild(punto);
+
+    capaArrastre(svgVoto, fijarX);
+    svgVoto.appendChild(guia);
+    svgVoto.appendChild(marcador);
+
+    svgVoto.addEventListener('keydown', ev => {
+      const paso = ev.shiftKey ? 10 : 1;
+      const actual = estado.movido ? estado.x : 50;
+      let nuevo = null;
+      if (ev.key === 'ArrowRight' || ev.key === 'ArrowUp') nuevo = actual + paso;
+      if (ev.key === 'ArrowLeft' || ev.key === 'ArrowDown') nuevo = actual - paso;
+      if (ev.key === 'Home') nuevo = 0;
+      if (ev.key === 'End') nuevo = 100;
+      if (nuevo !== null) { ev.preventDefault(); fijarX(Math.min(100, Math.max(0, nuevo)) / 100); }
+    });
+
+    cont.appendChild(svgVoto);
+  }
+
+  function fijarX(x01, porArrastre) {
+    const x = Math.min(1, Math.max(0, x01));
+    const y = V.valleY(x);
+    estado.x = x * 100;
+    estado.movido = true;
+
+    const px = X(x), py = Y(y);
+    guia.setAttribute('x1', px); guia.setAttribute('x2', px);
+    marcador.setAttribute('transform', 'translate(' + px + ',' + py + ')');
+    const et = V.etiquetaAceptacion(y);
+    marcador.firstChild.setAttribute('stroke', et.tono === 'pos' ? '#28c9b7' : et.tono === 'neg' ? '#e5726a' : '#7c6cf0');
+    marcador.children[1].setAttribute('stroke', et.tono === 'pos' ? '#28c9b7' : et.tono === 'neg' ? '#e5726a' : '#7c6cf0');
+
+    $('lecturaX').textContent = Math.round(x * 100) + ' %';
+    const ly = $('lecturaY');
+    ly.textContent = et.txt + ' · ' + V.indice(y) + '/100';
+    ly.className = 'v ' + et.tono;
+
+    $('sliderX').value = Math.round(estado.x);
+    svgVoto.setAttribute('aria-valuenow', Math.round(estado.x));
+    svgVoto.setAttribute('aria-valuetext', Math.round(estado.x) + ' % de parecido humano, ' + et.txt.toLowerCase());
+    $('btnSiguiente').disabled = false;
+    if (porArrastre) { /* nada extra: feedback inmediato */ }
+  }
+
+  function pintarRobot() {
+    const r = estado.orden[estado.idx];
+    estado.fase = 'voto';
+    estado.movido = false;
+    estado.confianzaTemp = estado.votos[estado.idx] ? estado.votos[estado.idx].confianza : null;
+    estado.conocidoTemp = estado.votos[estado.idx] ? estado.votos[estado.idx].conocido : null;
+
+    $('contador').textContent = 'Robot ' + (estado.idx + 1) + ' de ' + estado.orden.length;
+    $('progresoFill').style.width = (100 * estado.idx / estado.orden.length) + '%';
+
+    const chip = $('chipCat');
+    chip.classList.add('hidden');
+
+    /* imagen */
+    const img = $('imagenRobot');
+    const sk = $('skeleton');
+    sk.style.display = 'block';
+    img.style.visibility = 'hidden';
+    img.alt = 'Robot sin identificar número ' + (estado.idx + 1);
+    img.onload = () => { sk.style.display = 'none'; img.style.visibility = 'visible'; };
+    img.src = r.img;
+    if (img.complete) img.onload();
+    const prox = estado.orden[estado.idx + 1];
+    if (prox) { const p = new Image(); p.src = prox.img; }
+
+    /* precarga oculta */
+    document.querySelectorAll('.preimg').forEach(n => n.remove());
+    const oculta = document.createElement('img');
+    oculta.className = 'preimg'; oculta.style.display = 'none'; oculta.src = r.img;
+    document.body.appendChild(oculta);
+
+    $('pieImagen').textContent = 'Imagen anónima · juzga solo lo que ves';
+    $('etiquetaSpoiler').textContent = 'sin spoilers';
+    $('ficha').classList.add('hidden');
+    $('ficha').innerHTML = '';
+    $('btnCambiar').classList.add('hidden');
+    $('btnSiguiente').textContent = estado.idx === estado.orden.length - 1
+      ? 'Registrar el último voto' : 'Registrar voto y ver quién era';
+    $('btnSiguiente').disabled = true;
+    $('btnAnterior').disabled = estado.idx === 0;
+
+    $('bloqueConfianza').classList.toggle('hidden', !estado.usarConfianza);
+    document.querySelectorAll('#chipsConfianza .chipbtn').forEach(b =>
+      b.classList.toggle('sel', Number(b.dataset.conf) === estado.confianzaTemp));
+    document.querySelectorAll('#chipsConocido .chipbtn').forEach(b =>
+      b.classList.toggle('sel', Number(b.dataset.con) === estado.conocidoTemp));
+
+    /* la barra arranca en el centro, sin voto */
+    estado.x = 50;
+    const y0 = V.valleY(0.5);
+    guia.setAttribute('x1', X(0.5)); guia.setAttribute('x2', X(0.5));
+    marcador.setAttribute('transform', 'translate(' + X(0.5) + ',' + Y(y0) + ')');
+    $('lecturaX').textContent = '—';
+    $('lecturaY').textContent = 'Mueve el marcador';
+    $('lecturaY').className = 'v';
+    $('sliderX').value = 50;
+    svgVoto.setAttribute('aria-valuenow', '50');
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function revelar() {
+    const r = estado.orden[estado.idx];
+    const cat = V.CATEGORIAS[r.cat];
+    const y = V.valleY(estado.x / 100);
+    const et = V.etiquetaAceptacion(y);
+    const refY = V.valleY(r.refRealismo / 100);
+
+    /* guardar voto */
+    estado.votos[estado.idx] = {
+      id: r.id, x: Math.round(estado.x), confianza: estado.confianzaTemp, conocido: estado.conocidoTemp
+    };
+
+    const chip = $('chipCat');
+    chip.textContent = cat.nombre;
+    chip.style.borderColor = cat.color;
+    chip.style.color = cat.color;
+    chip.classList.remove('hidden');
+    $('etiquetaSpoiler').textContent = 'revelado';
+    $('pieImagen').textContent = r.nombre + ' · ' + r.obra + ' · ' + r.anio;
+
+    const dif = estado.x - r.refRealismo;
+    const cmp = Math.abs(dif) < 7
+      ? 'La referencia del estudio lo ubica casi en el mismo punto.'
+      : dif < 0
+        ? 'La referencia del estudio lo ubica ' + Math.abs(Math.round(dif)) + ' puntos más hacia lo humano que tú.'
+        : 'La referencia del estudio lo ubica ' + Math.round(dif) + ' puntos más hacia lo mecánico que tú.';
+
+    const f = $('ficha');
+    f.innerHTML =
+      '<div class="chip cat" style="border-color:' + cat.color + ';color:' + cat.color + '">' + cat.nombre + '</div>' +
+      '<div class="ft">' + r.nombre + '</div>' +
+      '<div class="fs">' + r.obra + ' · ' + r.anio + '</div>' +
+      '<div class="fd">' + r.dato + '</div>' +
+      '<div class="fpos">Lo pusiste en <b>' + Math.round(estado.x) + ' %</b> de parecido humano y te provocó una sensación de <b>' + et.txt.toLowerCase() +
+      '</b> (' + V.indice(y) + '/100, frente a ' + V.indice(refY) + '/100 de la referencia). ' + cmp + '</div>';
+    f.classList.remove('hidden');
+
+    estado.fase = 'revelado';
+    $('btnCambiar').classList.remove('hidden');
+    $('btnSiguiente').textContent = estado.idx === estado.orden.length - 1 ? 'Ver mis resultados' : 'Siguiente robot';
+    $('btnSiguiente').disabled = false;
+    if ($('ficha').scrollIntoView) $('ficha').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  function volverAVotar() {
+    estado.fase = 'voto';
+    $('ficha').classList.add('hidden');
+    $('ficha').innerHTML = '';
+    $('btnCambiar').classList.add('hidden');
+    $('btnSiguiente').textContent = estado.idx === estado.orden.length - 1
+      ? 'Registrar el último voto' : 'Registrar voto y ver quién era';
+    /* recuperar el valor previo para que no pierda su posición */
+    const prev = estado.votos[estado.idx];
+    if (prev) {
+      estado.movido = true;
+      fijarX(prev.x / 100);
+    }
+  }
+
+  function avanzar() {
+    if (estado.fase === 'voto') { revelar(); return; }
+    if (estado.idx < estado.orden.length - 1) {
+      estado.idx++;
+      pintarRobot();
+      montarCurvaVoto();
+    } else {
+      terminar();
+    }
+  }
+
+  /* =====================================================================
+     RESULTADOS
+     ===================================================================== */
+  function terminar() {
+    const previaStored = leerDatos().sesiones;
+    const previaAnalisis = previaStored.length ? analizarVotos(previaStored[previaStored.length - 1].votos, null) : null;
+    const a = V.analizar(estado.votos.map(v => ({ id: v.id, x: v.x, confianza: v.confianza, conocido: v.conocido })), previaAnalisis);
+    const guardado = guardarSesion(a);
+    mostrarResultados(a, previaAnalisis, guardado);
+  }
+
+  function analizarVotos(votos, previa) {
+    return V.analizar(votos.map(v => ({ id: v.id, x: v.x, confianza: v.confianza ? v.confianza : null, conocido: (v.conocido === true || v.conocido === false) ? v.conocido : null })), previa || null);
+  }
+
+  function mostrarResultados(a, previa, guardadoOk, desdeHistorial) {
+    $('pantalla-inicio').classList.add('hidden');
+    $('pantalla-voto').classList.add('hidden');
+    $('pantalla-resultados').classList.remove('hidden');
+
+    $('avisoPrevio').innerHTML = desdeHistorial
+      ? '<div class="aviso-previo"><span>Estos son tus resultados guardados del ' + new Date(a.hora).toLocaleString('es-CO') + '.</span>' +
+        '<span class="btn-row"><button class="btn small primary" id="btnNuevoRecorrido">Hacer un recorrido nuevo</button></span></div>'
+      : '';
+
+    /* perfil */
+    const arq = a.arquetipo;
+    $('perfilCaja').innerHTML =
+      '<div><div class="ptic">' + arq.titulo + '</div><div class="plema">' + arq.lema + '  ' + arq.zona.desc + '</div></div>';
+
+    /* kpis */
+    const kpi = (k, v, s) => '<div class="kpi"><div class="k">' + k + '</div><div class="v">' + v + '</div><div class="s">' + s + '</div></div>';
+    $('kpis').innerHTML =
+      kpi('Aceptación media', a.aceptacion + '/100', 'Promedio de todos tus votos en la curva.') +
+      kpi('Profundidad del valle', Math.round(a.profundidadIdx) + '/100', 'Qué tan abajo llegaste respecto al mejor robot posible.') +
+      kpi('Tu punto más incómodo', Math.round(a.xPeor * 100) + ' %', a.peor.nombre + ': ' + a.peor.indice + '/100 de aceptación.') +
+      kpi('Coincidencia con la referencia', a.ajuste + ' %', 'Qué tan cerca votaste de la curva esperada por el estudio.');
+
+    /* gráfico de resultados */
+    dibujarResultado(a);
+
+    /* rankings */
+    const fila = (i, bueno) =>
+      '<div class="rank-it"><img src="' + i.img + '" alt="' + i.nombre + '" loading="lazy">' +
+      '<div><div class="rn">' + i.nombre + '</div><div class="ro">' + i.catNombre + ' · ' + Math.round(i.x * 100) + ' % humano</div></div>' +
+      '<div class="rv" style="color:' + (bueno ? 'var(--accent2)' : 'var(--warn)') + '">' + i.indice + '<span class="small muted">/100</span></div></div>';
+    $('rankSiniestros').innerHTML = a.siniestros.map(i => fila(i, false)).join('');
+    $('rankFiables').innerHTML = a.fiables.map(i => fila(i, true)).join('');
+
+    /* categorías */
+    $('cats').innerHTML = a.porCat.filter(c => c.n).map(c =>
+      '<div class="cat-row"><span>' + c.nombre + '</span>' +
+      '<div class="cat-bar"><div class="cat-fill" style="width:' + c.indice + '%;background:' + c.color + '"></div></div>' +
+      '<span class="mono" style="text-align:right">' + c.indice + '</span></div>').join('');
+
+    /* feedback */
+    $('feedback').innerHTML = V.feedback(a).map(s =>
+      '<div class="fsec"><h3>' + s.titulo + '</h3><p>' + s.html + '</p></div>').join('');
+
+    /* tabla */
+    const confTxt = c => c === null ? '—' : c === 2 ? 'Sí' : c === 1 ? 'Con supervisión' : 'No';
+    $('tabla').innerHTML =
+      '<thead><tr><th>#</th><th>Robot</th><th>Categoría</th><th class="num">Parecido humano</th><th class="num">Aceptación</th><th class="num">Referencia</th><th>Confianza</th></tr></thead><tbody>' +
+      a.items.map((i, n) =>
+        '<tr><td class="mono muted">' + (n + 1) + '</td>' +
+        '<td><b>' + i.nombre + '</b><div class="small muted">' + i.obra + ' · ' + i.anio + '</div></td>' +
+        '<td><span class="dot-cat" style="background:' + i.catColor + '"></span>' + i.catNombre + '</td>' +
+        '<td class="num">' + Math.round(i.x * 100) + ' %</td>' +
+        '<td class="num">' + i.indice + '</td>' +
+        '<td class="num muted">' + i.refIndice + '</td>' +
+        '<td>' + confTxt(i.confianza) + '</td></tr>').join('') +
+      '</tbody>';
+
+    /* referencias y créditos */
+    $('refs').innerHTML = V.REFERENCIAS.map(r => '<li>' + r.txt + ' <a href="' + r.url + '" target="_blank" rel="noopener">↗</a></li>').join('');
+    $('creditos').innerHTML = V.CREDITOS.map(c => '<li>' + c.txt + '</li>').join('');
+
+    /* guardado */
+    $('estadoGuardado').textContent = guardadoOk
+      ? 'Tus votos quedaron guardados en este navegador para poder comparar recorridos.'
+      : 'No pudimos guardar tus votos en este navegador (¿modo privado?). El resultado sigue siendo válido.';
+
+    estado.analisis = a;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  let mostrarRef = true;
+  function dibujarResultado(a) {
+    const cont = $('curva-resultado');
+    cont.innerHTML = '';
+    const svg = crearSvgCurva('res', { anotaciones: true });
+    svg.setAttribute('role', 'img');
+    svg.setAttribute('aria-label', 'Gráfico del valle con los 16 robots votados');
+
+    /* línea del mínimo propio */
+    const vx = X(a.xPeor);
+    svg.appendChild(el('line', { x1: vx, x2: vx, y1: Y(-1), y2: Y(V.valleY(a.xPeor)), stroke: '#e5726a', 'stroke-width': 1.4, 'stroke-dasharray': '5 4', opacity: '.75' }));
+    svg.appendChild(el('text', { x: vx, y: VB.h - VB.b + 40, 'text-anchor': 'middle', fill: '#e5726a', 'font-size': 11, 'font-family': "'IBM Plex Mono', monospace" }, 'tu mínimo ' + Math.round(a.xPeor * 100) + '%'));
+
+    /* línea de referencia del estudio */
+    const rx = X(V.PUNTO_MAS_SINIESTRO.x);
+    svg.appendChild(el('line', { x1: rx, x2: rx, y1: Y(-1), y2: Y(V.PUNTO_MAS_SINIESTRO.y), stroke: '#6f7c90', 'stroke-width': 1.2, 'stroke-dasharray': '2 6' }));
+    svg.appendChild(el('text', { x: rx, y: VB.t + 12, 'text-anchor': 'middle', fill: '#6f7c90', 'font-size': 10.5, 'font-family': "'IBM Plex Mono', monospace" }, 'estudio 72%'));
+
+    /* referencia y conector, en una capa que se puede ocultar */
+    const gRef = el('g', { id: 'capaRef' });
+    a.items.forEach(i => {
+      const yr = V.valleY(i.refX);
+      gRef.appendChild(el('path', {
+        d: 'M ' + X(i.x) + ' ' + Y(i.y) + ' L ' + X(i.refX) + ' ' + Y(yr),
+        stroke: '#93a0b4', 'stroke-width': 1, 'stroke-dasharray': '3 4', opacity: '.45'
+      }));
+      gRef.appendChild(el('circle', { cx: X(i.refX), cy: Y(yr), r: 5.5, fill: 'none', stroke: '#93a0b4', 'stroke-width': 2, opacity: '.85' }));
+    });
+    svg.appendChild(gRef);
+
+    /* votos del usuario: evita solapamiento por filas */
+    const filas = [0, -21, 21, -41, 41, -59, 59];
+    const ultimoX = filas.map(() => -1e9);
+    const puntos = a.items.slice().sort((p, q) => p.x - q.x);
+    puntos.forEach((i, n) => {
+      const px = X(i.x), py = Y(i.y);
+      let fila = 0;
+      for (let f = 0; f < filas.length; f++) { if (px - ultimoX[f] > 42) { fila = f; break; } }
+      ultimoX[fila] = px;
+      const et = V.etiquetaAceptacion(i.y);
+      const color = et.tono === 'pos' ? '#28c9b7' : et.tono === 'neg' ? '#e5726a' : '#7c6cf0';
+      const g = el('g');
+      g.appendChild(el('circle', { cx: px, cy: py, r: 11, fill: '#11151d', stroke: color, 'stroke-width': 2.6 }));
+      g.appendChild(el('text', { x: px, y: py + 3.8, 'text-anchor': 'middle', fill: '#e9edf3', 'font-size': 10, 'font-weight': 600, 'font-family': "'IBM Plex Mono', monospace" }, String(n + 1)));
+      const ly = py + (fila === 0 ? 0 : filas[fila]);
+      if (fila !== 0) g.appendChild(el('line', { x1: px, y1: py, x2: px, y2: ly + (fila < 0 ? 9 : -9), stroke: color, 'stroke-width': 1, opacity: '.5' }));
+      g.appendChild(el('text', {
+        x: px, y: ly + (fila === 0 ? -17 : (fila < 0 ? -4 : 15)), 'text-anchor': 'middle',
+        fill: color, 'font-size': 10, 'font-family': "'IBM Plex Mono', monospace"
+      }, String(n + 1)));
+      g.appendChild(el('title', {}, i.nombre + ' — ' + Math.round(i.x * 100) + ' % humano, aceptación ' + i.indice + '/100'));
+      svg.appendChild(g);
+    });
+
+    /* lista numerada */
+    const listaHtml = a.items.slice().sort((p, q) => p.x - q.x)
+      .map((i, n) => '<span style="margin-right:14px;white-space:nowrap"><b class="mono" style="color:var(--accent2)">' + (n + 1) + '</b> ' + i.nombre + '</span>').join('');
+    cont.innerHTML = '';
+    cont.appendChild(svg);
+    const div = document.createElement('div');
+    div.className = 'small muted';
+    div.style.marginTop = '12px';
+    div.style.lineHeight = '1.9';
+    div.innerHTML = listaHtml;
+    cont.appendChild(div);
+    gRef.style.display = mostrarRef ? '' : 'none';
+  }
+
+  /* =====================================================================
+     EVENTOS
+     ===================================================================== */
+  function iniciarRecorrido() {
+    const aleatorio = $('optAleatorio').checked;
+    estado.usarConfianza = $('optConfianza').checked;
+    estado.orden = V.ROBOTS.slice();
+    if (aleatorio) {
+      for (let i = estado.orden.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [estado.orden[i], estado.orden[j]] = [estado.orden[j], estado.orden[i]];
+      }
+    }
+    estado.idx = 0;
+    estado.votos = [];
+    estado.fase = 'voto';
+    $('pantalla-inicio').classList.add('hidden');
+    $('pantalla-resultados').classList.add('hidden');
+    $('pantalla-voto').classList.remove('hidden');
+    montarCurvaVoto();
+    pintarRobot();
+  }
+
+  $('btnComenzar').addEventListener('click', iniciarRecorrido);
+  $('btnSiguiente').addEventListener('click', avanzar);
+  $('btnCambiar').addEventListener('click', volverAVotar);
+  $('btnAnterior').addEventListener('click', () => {
+    if (estado.idx === 0) return;
+    estado.idx--;
+    pintarRobot();
+    montarCurvaVoto();
+  });
+  $('sliderX').addEventListener('input', ev => fijarX(Number(ev.target.value) / 100));
+  document.querySelectorAll('#chipsConfianza .chipbtn').forEach(b => {
+    b.addEventListener('click', () => {
+      const v = Number(b.dataset.conf);
+      estado.confianzaTemp = (estado.confianzaTemp === v) ? null : v;
+      document.querySelectorAll('#chipsConfianza .chipbtn').forEach(o => o.classList.toggle('sel', o === b && estado.confianzaTemp !== null));
+    });
+  });
+  document.querySelectorAll('#chipsConocido .chipbtn').forEach(b => {
+    b.addEventListener('click', () => {
+      const v = Number(b.dataset.con);
+      estado.conocidoTemp = (estado.conocidoTemp === v) ? null : v;
+      document.querySelectorAll('#chipsConocido .chipbtn').forEach(o => o.classList.toggle('sel', o === b && estado.conocidoTemp !== null));
+    });
+  });
+  $('btnRef').addEventListener('click', () => {
+    /* el estado se guarda en `mostrarRef`; la capa se busca en cada llamada */
+    mostrarRef = !mostrarRef;
+    $('btnRef').setAttribute('aria-pressed', String(mostrarRef));
+    $('btnRef').textContent = mostrarRef ? 'ocultar referencia del estudio' : 'mostrar referencia del estudio';
+    const capa = document.getElementById('capaRef');
+    if (capa) capa.style.display = mostrarRef ? '' : 'none';
+  });
+  $('btnRepetir').addEventListener('click', () => {
+    $('pantalla-resultados').classList.add('hidden');
+    $('pantalla-inicio').classList.remove('hidden');
+    actualizarPortada();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+  document.addEventListener('click', ev => {
+    if (ev.target && ev.target.id === 'btnNuevoRecorrido') {
+      $('pantalla-resultados').classList.add('hidden');
+      $('pantalla-inicio').classList.remove('hidden');
+      actualizarPortada();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  });
+  $('btnCSV').addEventListener('click', () => {
+    if (!estado.analisis) return;
+    descargar('valle-siniestro.csv', V.aCSV(estado.analisis), 'text/csv;charset=utf-8');
+  });
+  $('btnCopiar').addEventListener('click', () => {
+    if (!estado.analisis) return;
+    const texto = V.resumenTexto(estado.analisis);
+    const listo = () => { $('btnCopiar').textContent = '¡Copiado!'; setTimeout(() => $('btnCopiar').textContent = 'Copiar resumen', 1800); };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(texto).then(listo).catch(() => respaldo(texto, listo));
+    } else respaldo(texto, listo);
+  });
+  $('btnBorrar').addEventListener('click', () => {
+    if (!confirm('¿Borrar todos los votos guardados en este navegador? No se puede deshacer.')) return;
+    try { localStorage.removeItem(CLAVE); } catch (e) {}
+    $('estadoGuardado').textContent = 'Datos borrados. Este navegador ya no conserva ninguno de tus votos.';
+  });
+
+  function respaldo(texto, cb) {
+    const t = document.createElement('textarea');
+    t.value = texto; t.style.position = 'fixed'; t.style.opacity = '0';
+    document.body.appendChild(t); t.select();
+    try { document.execCommand('copy'); cb(); } catch (e) { alert('Copia manualmente:\n\n' + texto); }
+    document.body.removeChild(t);
+  }
+  function descargar(nombre, contenido, tipo) {
+    const b = new Blob(['\ufeff' + contenido], { type: tipo });
+    const u = URL.createObjectURL(b);
+    const a = document.createElement('a');
+    a.href = u; a.download = nombre;
+    document.body.appendChild(a); a.click();
+    setTimeout(() => { URL.revokeObjectURL(u); a.remove(); }, 400);
+  }
+
+  /* ---------------- portada dinámica ---------------- */
+  function actualizarPortada() {
+    const d = leerDatos();
+    const btn = $('btnRetomar');
+    if (d.sesiones.length) {
+      btn.hidden = false;
+      btn.textContent = d.sesiones.length === 1
+        ? 'Ver mi último resultado'
+        : 'Ver mi último resultado (' + d.sesiones.length + ' recorridos guardados)';
+    } else btn.hidden = true;
+  }
+
+  $('btnRetomar').addEventListener('click', () => {
+    const d = leerDatos();
+    if (!d.sesiones.length) return;
+    const ultima = d.sesiones[d.sesiones.length - 1];
+    const previa = d.sesiones.length > 1 ? analizarVotos(d.sesiones[d.sesiones.length - 2].votos, null) : null;
+    const a = analizarVotos(ultima.votos, previa);
+    if (!a) return;
+    estado.analisis = a;
+    mostrarResultados(a, previa, false, true);
+  });
+
+  /* ---------------- arranque ---------------- */
+  montarDemo();
+  actualizarPortada();
+})();
+</script>
+</body>
+</html>
