@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>El Valle de lo Siniestro — Simulador</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<style>
+  :root{
+    --bg:#0c0f14;
+    --bg2:#11151d;
+    --panel:#161b25;
+    --panel2:#1d2330;
+    --line:#2a3140;
+    --text:#e9edf3;
+    --muted:#93a0b4;
+    --accent:#7c6cf0;
+    --accent-soft:#7c6cf033;
+    --accent2:#28c9b7;
+    --accent2-soft:#28c9b733;
+    --warn:#e5726a;
+    --sans:'IBM Plex Sans', system-ui, sans-serif;
+    --serif:'Fraunces', Georgia, serif;
+    --mono:'IBM Plex Mono', monospace;
+    color-scheme: dark;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(1100px 600px at 82% -10%, #1a2436 0%, transparent 60%),
+      radial-gradient(900px 500px at -10% 110%, #211a36 0%, transparent 55%),
+      var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    min-height:100%;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{
+    max-width:920px;
+    margin:0 auto;
+    padding:32px 20px 64px;
+  }
+  .top{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:16px;
+    margin-bottom:28px;
+    flex-wrap:wrap;
+  }
+  .brand{
+    font-family:var(--serif);
+    font-optical-sizing:auto;
+    font-weight:600;
+    font-size:20px;
+    letter-spacing:.2px;
+  }
+  .brand span{color:var(--accent2);}
+  .tag{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--muted);
+    border:1px solid var(--line);
+    padding:4px 9px;
+    border-radius:20px;
+  }
+  .card{
+    background:linear-gradient(180deg,var(--panel),var(--panel2));
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:32px;
+  }
+  @media (max-width:600px){ .card{padding:22px 18px;} .wrap{padding:20px 14px 48px;} }
+
+  /* ---- Landing ---- */
+  .hero{
+    display:grid;
+    grid-template-columns:1.1fr .9fr;
+    gap:36px;
+    align-items:center;
+  }
+  @media (max-width:760px){ .hero{grid-template-columns:1fr; text-align:center;} .facewrap{margin:0 auto;} }
+  h1{
+    font-family:var(--serif);
+    font-optical-sizing:auto;
+    font-weight:600;
+    font-size:clamp(30px,4.4vw,44px);
+    line-height:1.08;
+    margin:0 0 14px;
+  }
+  h1 em{font-style:italic;color:var(--accent2);}
+  .lead{
+    color:var(--muted);
+    font-size:15.5px;
+    line-height:1.6;
+    max-width:46ch;
+    margin:0 0 26px;
+  }
+  .facewrap{width:230px;height:230px;}
+  .modes{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+    margin-top:8px;
+  }
+  @media (max-width:600px){ .modes{grid-template-columns:1fr;} }
+  .mode-btn{
+    text-align:left;
+    background:var(--panel2);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:18px;
+    cursor:pointer;
+    color:var(--text);
+    font-family:var(--sans);
+    transition:border-color .15s, transform .1s, background .15s;
+  }
+  .mode-btn:hover{border-color:var(--accent);background:#1f2635;}
+  .mode-btn:active{transform:scale(.98);}
+  .mode-btn .mt{font-weight:600;font-size:15.5px;margin-bottom:4px;}
+  .mode-btn .ms{font-size:12.5px;color:var(--muted);line-height:1.5;}
+  .mode-btn .mnum{
+    display:inline-block;font-family:var(--mono);font-size:11px;color:var(--accent2);
+    border:1px solid var(--accent2-soft);background:var(--accent2-soft);
+    padding:2px 8px;border-radius:20px;margin-bottom:10px;
+  }
+
+  /* ---- progress ---- */
+  .progress-row{display:flex;align-items:center;gap:12px;margin-bottom:26px;}
+  .progress-track{flex:1;height:6px;background:var(--line);border-radius:6px;overflow:hidden;}
+  .progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:6px;transition:width .3s ease;}
+  .progress-label{font-family:var(--mono);font-size:11.5px;color:var(--muted);white-space:nowrap;}
+  .participant-chip{
+    font-family:var(--mono);font-size:11.5px;color:var(--accent2);
+    border:1px solid var(--accent2-soft);background:var(--accent2-soft);
+    padding:3px 10px;border-radius:20px;margin-bottom:16px;display:inline-block;
+  }
+
+  .q-eyebrow{font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:10px;}
+  .q-title{font-family:var(--serif);font-size:22px;font-weight:500;line-height:1.35;margin:0 0 22px;}
+
+  .scale{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px;}
+  .scale button{
+    flex:1;min-width:64px;
+    padding:14px 6px;
+    border-radius:10px;
+    border:1px solid var(--line);
+    background:var(--bg2);
+    color:var(--text);
+    font-family:var(--sans);
+    font-size:13px;
+    cursor:pointer;
+    transition:all .12s;
+  }
+  .scale button:hover{border-color:var(--accent);}
+  .scale button.sel{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600;}
+  .scale-labels{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted);margin-bottom:26px;}
+
+  .slider-zone{margin:14px 0 28px;}
+  input[type=range]{
+    width:100%;height:6px;border-radius:6px;
+    background:linear-gradient(90deg, var(--accent-soft), var(--warn));
+    -webkit-appearance:none;appearance:none;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;width:22px;height:22px;border-radius:50%;
+    background:var(--text);border:3px solid var(--accent);cursor:pointer;margin-top:-8px;
+  }
+  input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--text);border:3px solid var(--accent);cursor:pointer;}
+  .slider-readout{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:8px;font-family:var(--mono);}
+  .slider-face{display:flex;justify-content:center;margin:18px 0;}
+
+  .choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:6px;}
+  @media (max-width:600px){.choice-grid{grid-template-columns:1fr;}}
+  .choice-card{
+    border:1px solid var(--line);background:var(--bg2);border-radius:12px;padding:16px;cursor:pointer;
+    font-size:13.5px;line-height:1.5;color:var(--text);
+  }
+  .choice-card:hover{border-color:var(--accent2);}
+  .choice-card.sel{border-color:var(--accent2);background:var(--accent2-soft);}
+  .choice-card b{display:block;margin-bottom:4px;font-size:13px;color:var(--accent2);font-family:var(--mono);font-weight:500;}
+
+  .nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:30px;}
+  .btn{
+    font-family:var(--sans);font-weight:600;font-size:14px;
+    padding:12px 22px;border-radius:10px;border:1px solid var(--line);
+    background:var(--panel2);color:var(--text);cursor:pointer;
+  }
+  .btn.primary{background:linear-gradient(90deg,var(--accent),#6a5ce0);border-color:transparent;color:#fff;}
+  .btn.ghost{background:transparent;}
+  .btn:disabled{opacity:.35;cursor:not-allowed;}
+  .btn.full{width:100%;}
+
+  input[type=text]{
+    width:100%;padding:13px 14px;border-radius:10px;border:1px solid var(--line);
+    background:var(--bg2);color:var(--text);font-family:var(--sans);font-size:14.5px;margin-bottom:18px;
+  }
+  label.flabel{font-size:12.5px;color:var(--muted);display:block;margin-bottom:8px;font-family:var(--mono);}
+
+  /* ---- results ---- */
+  .res-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:18px;}
+  .res-title{font-family:var(--serif);font-size:26px;font-weight:600;margin:0;}
+  .res-sub{color:var(--muted);font-size:13.5px;margin-top:6px;}
+  .chart-wrap{background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:18px;margin:18px 0 22px;}
+  .dims{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px;}
+  @media (max-width:600px){.dims{grid-template-columns:1fr;}}
+  .dim{background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:12px 14px;}
+  .dim .dn{font-size:12px;color:var(--muted);margin-bottom:6px;}
+  .dim .dv{font-family:var(--mono);font-size:20px;font-weight:600;color:var(--accent2);}
+  .feedback{background:var(--accent-soft);border:1px solid #7c6cf055;border-radius:14px;padding:18px 20px;font-size:14px;line-height:1.65;margin-bottom:20px;}
+  .feedback b{color:var(--accent2);}
+  .refs{font-size:13px;color:var(--muted);line-height:1.9;}
+  .refs a{color:var(--accent2);text-decoration:none;border-bottom:1px dotted var(--accent2);}
+  .legend-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:8px;}
+  .legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);font-family:var(--mono);}
+  .legend-dot{width:9px;height:9px;border-radius:50%;}
+  .divergence{background:var(--warn)22;border:1px solid #e5726a55;border-radius:12px;padding:14px 16px;font-size:13.5px;margin-bottom:18px;color:#f2b8b3;}
+
+  .hidden{display:none !important;}
+  .footer-note{text-align:center;color:var(--muted);font-size:11.5px;margin-top:26px;font-family:var(--mono);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <div class="brand">El Valle de lo <span>Siniestro</span></div>
+    <div class="tag" id="modeTag">Interacción humano-máquina en salud</div>
+  </div>
+
+  <!-- ===== LANDING ===== -->
+  <div id="screen-landing" class="card">
+    <div class="hero">
+      <div>
+        <h1>¿Dónde está <em>tu</em> límite de confianza?</h1>
+        <p class="lead">Un simulador de dilemas clínicos con agentes artificiales de distinto grado de realismo. Cada elección construye tu perfil de aceptación de IA en salud — y lo compara con el de otros.</p>
+      </div>
+      <div class="facewrap">
+        <svg viewBox="0 0 200 200" width="100%" height="100%">
+          <defs>
+            <linearGradient id="faceGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#7c6cf0"/>
+              <stop offset="100%" stop-color="#28c9b7"/>
+            </linearGradient>
+          </defs>
+          <circle cx="100" cy="100" r="78" fill="none" stroke="url(#faceGrad)" stroke-width="1.4" opacity=".5"/>
+          <circle cx="100" cy="100" r="58" fill="#161b25" stroke="url(#faceGrad)" stroke-width="1.6"/>
+          <circle cx="78" cy="90" r="5.5" fill="#e9edf3"/>
+          <circle cx="122" cy="90" r="5.5" fill="#e9edf3"/>
+          <path d="M76 122 Q100 138 124 122" stroke="#e9edf3" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path d="M100 22 L100 42" stroke="url(#faceGrad)" stroke-width="1.4" opacity=".6"/>
+          <path d="M42 60 Q20 100 42 140" stroke="url(#faceGrad)" stroke-width="1" fill="none" opacity=".35"/>
+          <path d="M158 60 Q180 100 158 140" stroke="url(#faceGrad)" stroke-width="1" fill="none" opacity=".35"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="modes">
+      <button class="mode-btn" onclick="startIndividual()">
+        <span class="mnum">01</span>
+        <div class="mt">Modo individual</div>
+        <div class="ms">Recorre los 7 dilemas por tu cuenta y obtén tu perfil personal de aceptación de IA en salud, con radar comparado contra el promedio esperado.</div>
+      </button>
+      <button class="mode-btn" onclick="showGroupSetup()">
+        <span class="mnum">02</span>
+        <div class="mt">Modo grupal · hasta 5</div>
+        <div class="ms">Pasa el mismo dispositivo entre 2 y 5 personas. Al final se comparan los perfiles y se resalta dónde el grupo más difiere.</div>
+      </button>
+    </div>
+  </div>
+
+  <!-- ===== GROUP SETUP ===== -->
+  <div id="screen-groupsetup" class="card hidden">
+    <div class="q-eyebrow">Modo grupal</div>
+    <h1 style="font-size:24px;">¿Cuántas personas van a participar?</h1>
+    <p class="lead" style="margin-bottom:22px;">Entre 2 y 5. Cada persona completará el mismo cuestionario por turnos, en este mismo dispositivo.</p>
+    <div class="choice-grid" id="groupSizeGrid" style="grid-template-columns:repeat(4,1fr);"></div>
+    <div class="nav-row">
+      <button class="btn ghost" onclick="goLanding()">Volver</button>
+      <button class="btn primary" id="groupStartBtn" disabled onclick="startGroupFlow()">Comenzar ronda 1</button>
+    </div>
+  </div>
+
+  <!-- ===== NAME ENTRY (group, per participant) ===== -->
+  <div id="screen-name" class="card hidden">
+    <div class="participant-chip" id="nameChip">Participante 1</div>
+    <h1 style="font-size:22px;">¿Cómo te llamas o qué apodo usamos?</h1>
+    <p class="lead" style="margin-bottom:18px;">Solo se usa para identificarte en la comparación del grupo.</p>
+    <label class="flabel">Nombre / apodo</label>
+    <input type="text" id="nameInput" placeholder="Ej. Camila, Mesa 3, Enfermería..." />
+    <div class="nav-row">
+      <button class="btn ghost" onclick="goLanding()">Cancelar</button>
+      <button class="btn primary" onclick="confirmName()">Empezar cuestionario</button>
+    </div>
+  </div>
+
+  <!-- ===== QUIZ ===== -->
+  <div id="screen-quiz" class="card hidden">
+    <div class="participant-chip hidden" id="quizChip"></div>
+    <div class="progress-row">
+      <div class="progress-track"><div class="progress-fill" id="progFill" style="width:0%"></div></div>
+      <div class="progress-label" id="progLabel">1 / 7</div>
+    </div>
+    <div id="qContainer"></div>
+    <div class="nav-row">
+      <button class="btn ghost" id="backBtn" onclick="prevQ()">Atrás</button>
+      <button class="btn primary" id="nextBtn" onclick="nextQ()" disabled>Siguiente</button>
+    </div>
+  </div>
+
+  <!-- ===== RESULTS ===== -->
+  <div id="screen-results" class="card hidden">
+    <div class="res-head">
+      <div>
+        <h2 class="res-title" id="resTitle">Tu perfil</h2>
+        <div class="res-sub" id="resSub"></div>
+      </div>
+    </div>
+    <div id="legendZone" class="legend-row hidden"></div>
+    <div class="chart-wrap"><canvas id="radarCanvas" height="260"></canvas></div>
+    <div id="divergenceZone"></div>
+    <div class="dims" id="dimsZone"></div>
+    <div class="feedback" id="feedbackZone"></div>
+    <div class="refs">
+      <div style="color:var(--text);font-weight:600;margin-bottom:6px;">Para seguir leyendo</div>
+      <div>→ Mori, M. (1970/2012). <a href="https://spectrum.ieee.org/the-uncanny-valley" target="_blank">The Uncanny Valley — ensayo original traducido, IEEE Spectrum</a></div>
+      <div>→ OMS (2021). <a href="https://www.who.int/publications/i/item/9789240029200" target="_blank">Ethics and governance of artificial intelligence for health</a></div>
+      <div>→ Vetter et al. (2024). <a href="https://doi.org/10.3389/frobt.2024.1347367" target="_blank">From care practices to speculative vignettes — design considerations for robots in good care</a>, Frontiers in Robotics and AI</div>
+    </div>
+    <div class="nav-row" id="resNavRow">
+      <button class="btn ghost" onclick="goLanding()">Volver al inicio</button>
+      <button class="btn primary hidden" id="nextParticipantBtn" onclick="nextParticipant()">Siguiente participante</button>
+    </div>
+  </div>
+
+  <div class="footer-note">Cátedra multidisciplinar · Interacción humano-máquina en salud · datos solo en este navegador, no se envían a ningún servidor</div>
+</div>
+
+<script>
+/* ---------------- DATA ---------------- */
+const QUESTIONS = [
+  {
+    id:'q1', type:'scale', dim:'confianza', reverse:false,
+    eyebrow:'Dilema 1 · Diagnóstico',
+    title:'Confiaría en que una IA me diera un diagnóstico preliminar, sin que un médico lo revise de inmediato.',
+    labels:['Totalmente en desacuerdo','Totalmente de acuerdo'],
+    n:5
+  },
+  {
+    id:'q2', type:'scale', dim:'sustitucion', reverse:false,
+    eyebrow:'Dilema 2 · Cuidado',
+    title:'Un robot de cuidado con apariencia muy humana podría reemplazar parte de las visitas de un cuidador humano a un adulto mayor con movilidad reducida.',
+    labels:['Totalmente en desacuerdo','Totalmente de acuerdo'],
+    n:5
+  },
+  {
+    id:'q3', type:'scale', dim:'transparencia', reverse:true,
+    eyebrow:'Dilema 3 · Transparencia',
+    title:'Si un avatar terapéutico hiperrealista mejora la adherencia de un paciente a su tratamiento, está bien que oculte que es una IA.',
+    labels:['Totalmente en desacuerdo','Totalmente de acuerdo'],
+    n:5
+  },
+  {
+    id:'q4', type:'scale', dim:'confianza', reverse:false,
+    eyebrow:'Dilema 4 · Triage',
+    title:'Un sistema automatizado de triage debería poder decidir el orden de atención en urgencias, incluso con información incompleta.',
+    labels:['Totalmente en desacuerdo','Totalmente de acuerdo'],
+    n:5
+  },
+  {
+    id:'q5', type:'slider', dim:'sensibilidad',
+    eyebrow:'Dilema 5 · El umbral',
+    title:'Desliza hasta el punto de realismo donde un avatar clínico empieza a incomodarte en vez de darte confianza.',
+    min:0, max:100
+  },
+  {
+    id:'q6', type:'scale', dim:'sustitucion', reverse:false,
+    eyebrow:'Dilema 6 · Compañía',
+    title:'La soledad de un paciente disminuye igual si quien lo acompaña a diario es un robot muy realista, en vez de una persona.',
+    labels:['Totalmente en desacuerdo','Totalmente de acuerdo'],
+    n:5
+  },
+  {
+    id:'q7', type:'choice', dim:'delegacion',
+    eyebrow:'Dilema 7 · Elección forzada',
+    title:'Un hospital debe elegir un solo modelo de cuidado nocturno para pacientes crónicos. ¿Cuál recomiendas?',
+    options:[
+      {key:'A', label:'Robot 24/7 hiperrealista', desc:'Compañía constante, monitoreo continuo, alto costo inicial, sin fatiga — pero sin verdadera empatía.', value:80},
+      {key:'B', label:'Cuidador humano part-time', desc:'Menor disponibilidad horaria, más económico, con juicio clínico y empatía genuina.', value:20}
+    ]
+  }
+];
+
+const DIM_META = {
+  confianza:{label:'Confianza clínica en la IA', desc:'Qué tan dispuesto/a estás a delegar decisiones diagnósticas o de triage en un sistema automatizado.'},
+  sustitucion:{label:'Apertura a sustituir cuidado humano', desc:'Qué tan aceptable te parece que un agente artificial reemplace tiempo de cuidado humano directo.'},
+  sensibilidad:{label:'Sensibilidad al valle inquietante', desc:'Qué tan pronto (a qué nivel de realismo) empieza a incomodarte un agente casi-humano. Más alto = te incomodas más rápido.'},
+  transparencia:{label:'Exigencia de transparencia', desc:'Qué tan importante te parece que el paciente siempre sepa que interactúa con una IA, incluso a costa de la eficacia terapéutica.'},
+  delegacion:{label:'Delegación de la decisión final', desc:'Qué tanto peso le darías a la opción más automatizada frente a la más humana en un dilema forzado.'}
+};
+
+const DIM_ORDER = ['confianza','sustitucion','sensibilidad','transparencia','delegacion'];
+const PALETTE = ['#28c9b7','#7c6cf0','#e5726a','#e0b23c','#4ea1f0'];
+
+/* ---------------- STATE ---------------- */
+let mode = null;          // 'individual' | 'group'
+let groupSize = 0;
+let currentParticipant = 1;
+let participantName = '';
+let answers = {};         // current participant's answers
+let qIndex = 0;
+let allProfiles = [];      // for group mode: [{name, scores}]
+let radarChart = null;
+
+/* ---------------- NAV HELPERS ---------------- */
+function showScreen(id){
+  ['landing','groupsetup','name','quiz','results'].forEach(s=>{
+    document.getElementById('screen-'+s).classList.toggle('hidden', ('screen-'+s)!==id);
+  });
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+function goLanding(){
+  mode=null; groupSize=0; currentParticipant=1; allProfiles=[]; answers={}; qIndex=0;
+  showScreen('screen-landing');
+  document.getElementById('modeTag').textContent = 'Interacción humano-máquina en salud';
+}
+
+/* ---------------- LANDING ACTIONS ---------------- */
+function startIndividual(){
+  mode='individual';
+  answers={}; qIndex=0;
+  document.getElementById('modeTag').textContent = 'Modo individual';
+  buildQuiz();
+  showScreen('screen-quiz');
+}
+
+function showGroupSetup(){
+  const grid = document.getElementById('groupSizeGrid');
+  grid.innerHTML='';
+  [2,3,4,5].forEach(n=>{
+    const d = document.createElement('div');
+    d.className='choice-card';
+    d.style.textAlign='center';
+    d.innerHTML = `<b>${n} personas</b>`;
+    d.onclick = ()=>{
+      [...grid.children].forEach(c=>c.classList.remove('sel'));
+      d.classList.add('sel');
+      groupSize = n;
+      document.getElementById('groupStartBtn').disabled = false;
+    };
+    grid.appendChild(d);
+  });
+  showScreen('screen-groupsetup');
+}
+
+function startGroupFlow(){
+  mode='group';
+  currentParticipant = 1;
+  allProfiles = [];
+  document.getElementById('modeTag').textContent = 'Modo grupal · '+groupSize+' personas';
+  askName();
+}
+
+function askName(){
+  document.getElementById('nameChip').textContent = 'Participante '+currentParticipant+' de '+groupSize;
+  document.getElementById('nameInput').value='';
+  showScreen('screen-name');
+  setTimeout(()=>document.getElementById('nameInput').focus(),150);
+}
+
+function confirmName(){
+  const v = document.getElementById('nameInput').value.trim();
+  participantName = v || ('Participante '+currentParticipant);
+  answers={}; qIndex=0;
+  buildQuiz();
+  showScreen('screen-quiz');
+}
+
+/* ---------------- QUIZ ---------------- */
+function buildQuiz(){
+  document.getElementById('quizChip').classList.toggle('hidden', mode!=='group');
+  if(mode==='group'){
+    document.getElementById('quizChip').textContent = participantName+' · '+currentParticipant+'/'+groupSize;
+  }
+  renderQuestion();
+}
+
+function renderQuestion(){
+  const q = QUESTIONS[qIndex];
+  document.getElementById('progLabel').textContent = (qIndex+1)+' / '+QUESTIONS.length;
+  document.getElementById('progFill').style.width = (((qIndex)/(QUESTIONS.length-1))*100)+'%';
+  const c = document.getElementById('qContainer');
+  let html = `<div class="q-eyebrow">${q.eyebrow}</div><div class="q-title">${q.title}</div>`;
+
+  if(q.type==='scale'){
+    html += `<div class="scale" id="scaleZone">`;
+    for(let i=1;i<=q.n;i++){
+      const sel = answers[q.id]===i ? 'sel' : '';
+      html += `<button class="${sel}" data-v="${i}" onclick="selectScale('${q.id}',${i})">${i}</button>`;
+    }
+    html += `</div><div class="scale-labels"><span>${q.labels[0]}</span><span>${q.labels[1]}</span></div>`;
+  } else if(q.type==='slider'){
+    const val = answers[q.id]!==undefined ? answers[q.id] : 50;
+    html += `
+      <div class="slider-face">${faceSVG(val)}</div>
+      <div class="slider-zone">
+        <input type="range" min="${q.min}" max="${q.max}" value="${val}" id="sliderInput" oninput="onSlide(this.value)">
+        <div class="slider-readout"><span>Muy esquemático (0)</span><span id="sliderVal">${val}</span><span>Fotorrealista (100)</span></div>
+      </div>`;
+  } else if(q.type==='choice'){
+    html += `<div class="choice-grid">`;
+    q.options.forEach(o=>{
+      const sel = answers[q.id]===o.key ? 'sel' : '';
+      html += `<div class="choice-card ${sel}" onclick="selectChoice('${q.id}','${o.key}')"><b>Opción ${o.key} · ${o.label}</b>${o.desc}</div>`;
+    });
+    html += `</div>`;
+  }
+  c.innerHTML = html;
+  document.getElementById('backBtn').disabled = (qIndex===0);
+  updateNextBtn();
+  if(q.type==='slider' && answers[q.id]===undefined){ answers[q.id]=50; updateNextBtn(); }
+}
+
+function faceSVG(realism){
+  // 0 = geometric/robotic, 100 = smooth/realistic -> tint shifts toward warn near the uncanny band (55-85)
+  const eerie = realism>50 && realism<90;
+  const stroke = eerie ? '#e5726a' : '#28c9b7';
+  const rx = 58 - (realism*0.12);
+  return `<svg viewBox="0 0 160 120" width="150" height="112">
+    <ellipse cx="80" cy="60" rx="${rx}" ry="50" fill="#0c0f14" stroke="${stroke}" stroke-width="2"/>
+    <circle cx="62" cy="52" r="${3+realism*0.03}" fill="${stroke}"/>
+    <circle cx="98" cy="52" r="${3+realism*0.03}" fill="${stroke}"/>
+    <path d="M60 ${76+realism*0.05} Q80 ${86-realism*0.05} 100 ${76+realism*0.05}" stroke="${stroke}" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+  </svg>`;
+}
+function onSlide(v){
+  answers[QUESTIONS[qIndex].id] = parseInt(v);
+  document.getElementById('sliderVal').textContent = v;
+  document.querySelector('.slider-face').innerHTML = faceSVG(parseInt(v));
+  updateNextBtn();
+}
+function selectScale(id, v){
+  answers[id]=v;
+  document.querySelectorAll('#scaleZone button').forEach(b=>b.classList.toggle('sel', parseInt(b.dataset.v)===v));
+  updateNextBtn();
+}
+function selectChoice(id, key){
+  answers[id]=key;
+  document.querySelectorAll('.choice-card').forEach(c=>c.classList.remove('sel'));
+  event.currentTarget.classList.add('sel');
+  updateNextBtn();
+}
+function updateNextBtn(){
+  const q = QUESTIONS[qIndex];
+  const answered = answers[q.id]!==undefined;
+  document.getElementById('nextBtn').disabled = !answered;
+  document.getElementById('nextBtn').textContent = (qIndex===QUESTIONS.length-1) ? 'Ver resultados' : 'Siguiente';
+}
+function prevQ(){ if(qIndex>0){ qIndex--; renderQuestion(); } }
+function nextQ(){
+  if(qIndex<QUESTIONS.length-1){ qIndex++; renderQuestion(); }
+  else { finishQuiz(); }
+}
+
+/* ---------------- SCORING ---------------- */
+function computeScores(ans){
+  // returns 0-100 per dimension
+  function scaleTo100(v, reverse){
+    // v in 1..5
+    let pct = ((v-1)/4)*100;
+    return reverse ? (100-pct) : pct;
+  }
+  const confVals = [];
+  const susVals = [];
+  QUESTIONS.forEach(q=>{
+    if(q.dim==='confianza' && q.type==='scale') confVals.push(scaleTo100(ans[q.id], q.reverse));
+    if(q.dim==='sustitucion' && q.type==='scale') susVals.push(scaleTo100(ans[q.id], q.reverse));
+  });
+  const transQ = QUESTIONS.find(q=>q.dim==='transparencia');
+  const transparencia = scaleTo100(ans[transQ.id], transQ.reverse); // reverse=true already applied -> high agree with hiding = low transparency pref
+  const sensibilidad = 100 - (ans['q5']!==undefined ? ans['q5'] : 50); // lower realism tolerance -> higher sensitivity
+  const choiceQ = QUESTIONS.find(q=>q.type==='choice');
+  const chosen = choiceQ.options.find(o=>o.key===ans[choiceQ.id]);
+  const delegacion = chosen ? chosen.value : 50;
+
+  const avg = arr => arr.length ? arr.reduce((a,b)=>a+b,0)/arr.length : 50;
+  return {
+    confianza: Math.round(avg(confVals)),
+    sustitucion: Math.round(avg(susVals)),
+    sensibilidad: Math.round(sensibilidad),
+    transparencia: Math.round(transparencia),
+    delegacion: Math.round(delegacion)
+  };
+}
+
+/* ---------------- FINISH / RESULTS ---------------- */
+function finishQuiz(){
+  const scores = computeScores(answers);
+  if(mode==='individual'){
+    allProfiles = [{name:'Tú', scores}];
+    showResults(false);
+  } else {
+    allProfiles.push({name:participantName, scores});
+    if(currentParticipant < groupSize){
+      currentParticipant++;
+      askName();
+    } else {
+      showResults(true);
+    }
+  }
+}
+
+function nextParticipant(){
+  // only relevant if we ever wanted to add flow post-results; kept for safety, not used since flow auto-advances
+}
+
+function dimText(v){ return v; }
+
+function buildFeedback(profiles, isGroup){
+  if(!isGroup){
+    const s = profiles[0].scores;
+    const sorted = DIM_ORDER.slice().sort((a,b)=>s[b]-s[a]);
+    const top = sorted[0], low = sorted[sorted.length-1];
+    let txt = `Tu perfil está más marcado por <b>${DIM_META[top].label.toLowerCase()}</b> (${s[top]}/100) y menos por <b>${DIM_META[low].label.toLowerCase()}</b> (${s[low]}/100). `;
+    if(s.sensibilidad>65){
+      txt += `Tu umbral de incomodidad frente al realismo es bajo: te incomodas con agentes que aún están lejos de ser perfectamente humanos, lo cual es exactamente lo que predice la hipótesis del valle inquietante de Mori. `;
+    } else {
+      txt += `Tu umbral de incomodidad es alto: toleras bien agentes muy realistas antes de sentir rechazo. `;
+    }
+    if(s.sustitucion>60 && s.transparencia<40){
+      txt += `Esta combinación — apertura a sustituir cuidado humano junto con baja exigencia de transparencia — es justamente la que más preocupa a los marcos éticos actuales sobre IA en salud, porque abre la puerta a que el paciente no sepa con certeza si está siendo cuidado por una persona o por una máquina.`;
+    } else if(s.confianza>65){
+      txt += `Delegarías bastante en sistemas automatizados de diagnóstico o triage: vale la pena preguntarte qué nivel de supervisión humana consideras irrenunciable, incluso en ese escenario.`;
+    } else {
+      txt += `En general tu perfil es cauteloso frente a la automatización del cuidado directo — una postura común entre quienes priorizan la relación humana en la atención en salud.`;
+    }
+    return txt;
+  } else {
+    // group divergence
+    let maxSpread=-1, maxDim=null;
+    DIM_ORDER.forEach(d=>{
+      const vals = profiles.map(p=>p.scores[d]);
+      const spread = Math.max(...vals)-Math.min(...vals);
+      if(spread>maxSpread){ maxSpread=spread; maxDim=d; }
+    });
+    const vals = profiles.map(p=>({n:p.name, v:p.scores[maxDim]})).sort((a,b)=>b.v-a.v);
+    let txt = `La mayor divergencia del grupo está en <b>${DIM_META[maxDim].label.toLowerCase()}</b>, con ${maxSpread} puntos de diferencia entre ${vals[0].n} (${vals[0].v}) y ${vals[vals.length-1].n} (${vals[vals.length-1].v}). ${DIM_META[maxDim].desc} `;
+    txt += `Vale la pena que el grupo discuta abiertamente por qué llegaron a posiciones tan distintas ahí: suele revelar diferencias formativas reales entre disciplinas — no solo opiniones personales.`;
+    return txt;
+  }
+}
+
+function showResults(isGroup){
+  showScreen('screen-results');
+  const titleEl = document.getElementById('resTitle');
+  const subEl = document.getElementById('resSub');
+  const legendZone = document.getElementById('legendZone');
+  const divergenceZone = document.getElementById('divergenceZone');
+  const dimsZone = document.getElementById('dimsZone');
+  const feedbackZone = document.getElementById('feedbackZone');
+
+  if(!isGroup){
+    titleEl.textContent = 'Tu perfil de aceptación de IA en salud';
+    subEl.textContent = 'Basado en tus 7 respuestas';
+    legendZone.classList.add('hidden');
+    divergenceZone.innerHTML='';
+    document.getElementById('nextParticipantBtn').classList.add('hidden');
+  } else {
+    titleEl.textContent = 'Comparación del grupo';
+    subEl.textContent = allProfiles.length+' perfiles · '+allProfiles.map(p=>p.name).join(', ');
+    legendZone.classList.remove('hidden');
+    legendZone.innerHTML = allProfiles.map((p,i)=>`<div class="legend-item"><span class="legend-dot" style="background:${PALETTE[i%PALETTE.length]}"></span>${p.name}</div>`).join('');
+    document.getElementById('nextParticipantBtn').classList.add('hidden');
+  }
+
+  // dims grid: for individual show values; for group show averages
+  dimsZone.innerHTML = DIM_ORDER.map(d=>{
+    let val;
+    if(!isGroup){ val = allProfiles[0].scores[d]; }
+    else { val = Math.round(allProfiles.reduce((a,p)=>a+p.scores[d],0)/allProfiles.length); }
+    return `<div class="dim"><div class="dn">${DIM_META[d].label}</div><div class="dv">${val}<span style="font-size:12px;color:var(--muted);">/100</span></div></div>`;
+  }).join('');
+
+  if(isGroup){
+    divergenceZone.innerHTML = `<div class="divergence">${buildFeedback(allProfiles, true)}</div>`;
+  }
+  feedbackZone.innerHTML = isGroup
+    ? `<b>Sobre tu propio perfil promedio del grupo:</b> las cinco dimensiones — ${DIM_ORDER.map(d=>DIM_META[d].label.toLowerCase()).join(', ')} — reflejan cómo cada persona negocia confianza, sustitución de cuidado y transparencia frente a un agente artificial.`
+    : buildFeedback(allProfiles, false);
+
+  renderRadar(allProfiles, isGroup);
+}
+
+function renderRadar(profiles, isGroup){
+  const ctx = document.getElementById('radarCanvas').getContext('2d');
+  if(radarChart){ radarChart.destroy(); }
+  const labels = DIM_ORDER.map(d=>DIM_META[d].label);
+  const datasets = profiles.map((p,i)=>({
+    label:p.name,
+    data: DIM_ORDER.map(d=>p.scores[d]),
+    borderColor: PALETTE[i%PALETTE.length],
+    backgroundColor: PALETTE[i%PALETTE.length]+'26',
+    borderWidth:2,
+    pointBackgroundColor: PALETTE[i%PALETTE.length],
+    pointRadius:3
+  }));
+  if(typeof Chart==='undefined'){
+    document.getElementById('radarCanvas').parentElement.innerHTML = '<div style="color:var(--muted);font-size:13px;text-align:center;padding:20px;">No se pudo cargar la librería de gráficos. Los valores numéricos están abajo.</div>';
+    return;
+  }
+  radarChart = new Chart(ctx, {
+    type:'radar',
+    data:{ labels, datasets },
+    options:{
+      responsive:true,
+      plugins:{ legend:{ display:false } },
+      scales:{
+        r:{
+          min:0, max:100,
+          angleLines:{ color:'#2a3140' },
+          grid:{ color:'#2a3140' },
+          pointLabels:{ color:'#c3cbda', font:{ size:11, family:"'IBM Plex Sans'" } },
+          ticks:{ display:false, backdropColor:'transparent' }
+        }
+      }
+    }
+  });
+}
+</script>
+</body>
+</html>
