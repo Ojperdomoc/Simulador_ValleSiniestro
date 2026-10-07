@@ -719,16 +719,22 @@
     document.querySelectorAll('#chipsConocido .chipbtn').forEach(b =>
       b.classList.toggle('sel', Number(b.dataset.con) === estado.conocidoTemp));
 
-    /* la barra arranca en el centro, sin voto */
-    estado.x = 50;
-    const y0 = V.valleY(0.5);
-    guia.setAttribute('x1', X(0.5)); guia.setAttribute('x2', X(0.5));
-    marcador.setAttribute('transform', 'translate(' + X(0.5) + ',' + Y(y0) + ')');
-    $('lecturaX').textContent = '—';
-    $('lecturaY').textContent = 'Mueve el marcador';
-    $('lecturaY').className = 'v';
-    $('sliderX').value = 50;
-    svgVoto.setAttribute('aria-valuenow', '50');
+    /* si ya había votado este robot (al volver atrás), se recupera su posición */
+    const previo = estado.votos[estado.idx];
+    if (previo) {
+      fijarX(previo.x / 100);
+    } else {
+      estado.x = 50;
+      const y0 = V.valleY(0.5);
+      guia.setAttribute('x1', X(0.5)); guia.setAttribute('x2', X(0.5));
+      marcador.setAttribute('transform', 'translate(' + X(0.5) + ',' + Y(y0) + ')');
+      $('lecturaX').textContent = '—';
+      $('lecturaY').textContent = 'Mueve el marcador';
+      $('lecturaY').className = 'v';
+      $('sliderX').value = 50;
+      svgVoto.setAttribute('aria-valuenow', '50');
+      $('btnSiguiente').disabled = true;
+    }
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
