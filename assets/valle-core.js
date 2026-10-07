@@ -122,6 +122,14 @@
     }
   ];
 
+  /* Cada robot dispone de DOS vistas (principal y detalle), reencuadradas y
+   * escaladas a ≤600×400 y centradas en el objeto (ver
+   * scripts/reencuadrar-robots.sh). `img` se conserva como alias de la vista
+   * principal para compatibilidad (ranking, exportaciones, etc.). */
+  ROBOTS.forEach(r => {
+    r.imgs = [r.img, r.img.replace(/\.jpg$/, '_detalle.jpg')];
+  });
+
   /* ------------------------------------------------------------------ *
    * 2. LA CURVA
    * ------------------------------------------------------------------ *
@@ -502,6 +510,8 @@
   const CREDITOS = [
     { txt: 'Maria de Metropolis, C-3PO, WALL·E, T-800, Ava, Astro Boy, Doraemon, Gundam, Motoko, 2B: fotogramas, pósteres y figuras pertenecientes a sus respectivas productoras y licenciantes (UFA, Lucasfilm/Disney, Pixar/Disney, StudioCanal, A24/Film4, Tezuka Productions, Shogakukan, Bandai Namco, Producción I.G, Square Enix).' },
     { txt: 'ASIMO: Honda Motor Co. · Pepper: SoftBank Robotics · Spot: Boston Dynamics (foto IEEE Spectrum) · Sophia: Hanson Robotics · Ameca: Engineered Arts · Geminoid HI: Hiroshi Ishiguro / ATR (foto vía robotsguide.com).' },
+    { txt: 'Cada robot se muestra con dos vistas (principal y detalle) reencuadradas y escaladas a 600×400 o menos, centradas en el objeto, mediante scripts/reencuadrar-robots.sh.' },
+    { txt: 'Las vistas de WALL·E, T‑800, Gundam RX‑78‑2 y 2B se regeneraron porque los recortes originales cortaban la cabeza o el cuerpo del robot; las demás proceden de las fuentes anteriores.' },
     { txt: 'Las imágenes se incluyen con fines educativos y de divulgación, sin ánimo de lucro. Todas las marcas y personajes pertenecen a sus dueños.' }
   ];
 

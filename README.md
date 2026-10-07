@@ -13,12 +13,12 @@ La segunda se abre desde la portada del simulador y también admite enlace direc
 
 - **16 robots** en tres categorías: cine y TV (Maria de *Metropolis*, C‑3PO, WALL·E, T‑800, Ava), anime y manga (Astro Boy, Doraemon, Gundam RX‑78‑2, Motoko Kusanagi, 2B) y compañías reales (ASIMO, Pepper, Spot, Sophia, Ameca, Geminoid HI de Ishiguro).
 - **Voto único sobre la curva:** se arrastra un marcador a lo largo de la curva de Mori (o se usan las flechas del teclado, o la barra de ajuste fino). La altura es la sensación que el robot provoca; la posición horizontal, el parecido humano percibido.
-- **Imagen anónima primero**, ficha con contexto y comparación con la referencia del estudio después de cada voto.
+- **Dos vistas anónimas primero** (principal y detalle, ≤600×400 y centradas en el robot), ficha con contexto y comparación con la referencia del estudio después de cada voto.
 - **Resultado final:** perfil («valle profundo», «valle tardío», «meseta»…), gráfico con los 16 votos, comparación por categorías, cruce entre agrado y confianza, y comparación con la sesión anterior. Todo con referencias citadas.
 - **Votos solo en el navegador** (`localStorage`), con exportación a CSV o resumen de texto y opción de borrado.
 - Accesible por teclado y compatible con `prefers-reduced-motion`.
 
-El catálogo, la curva y el análisis viven en `assets/valle-core.js`, sin dependencias y testeable con Node (`require('./assets/valle-core.js')`). Las imágenes optimizadas están en `assets/robots/` y su procedencia se detalla en la sección «Imágenes» de la propia página.
+El catálogo, la curva y el análisis viven en `assets/valle-core.js`, sin dependencias y testeable con Node (`require('./assets/valle-core.js')`). Cada robot cuenta con dos vistas (principal y detalle) reencuadradas y escaladas a 600×400 o menos, centradas en el objeto: las finales viven en `assets/robots/`, las fuentes en `assets/robots/originales/` y el proceso es reproducible con `bash scripts/reencuadrar-robots.sh` (requiere ImageMagick). La procedencia de las imágenes se detalla en la sección «Imágenes» de la propia página.
 
 ## Publicar en GitHub Pages
 
